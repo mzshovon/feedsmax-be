@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Services\RuleService;
+
+use App\Services\Contracts\RuleEngineInterface;
+use App\Services\StrategyService\QuotaChecker;
+use App\Services\StrategyService\SessionQuotaCheckStrategy;
+
+class SurveySessionQuota implements RuleEngineInterface
+{
+    private $quotaChecker;
+
+    public function __construct()
+    {
+        $this->quotaChecker = new QuotaChecker();
+    }
+
+    /**
+     * Here match() will check if msisdn has hits and attempt both in between provision days
+     * then it will return false
+     * otherwise return true
+     * ex. provision explained if any attempt placed in session ex. 5, 10, 15 minutes
+     * If the total count set to 0 after decrement it will return false
+     * After certain days it will check and place new attempt for that particular msisdn
+     */
+    public function match(array $request, ...$args): bool
+    {
+        $session = $args[0];
+        $this->quotaChecker->setStrategy(new SessionQuotaCheckStrategy());
+        return $this->quotaChecker->checkQuota("session", $request['session_time']);
+    }
+}
