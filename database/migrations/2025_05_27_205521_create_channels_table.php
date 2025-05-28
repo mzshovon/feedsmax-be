@@ -18,7 +18,6 @@ return new class extends Migration
             $table->json('retry')->nullable();
             $table->tinyInteger('status');
             $table->integer('pagination')->default(10)->comment("pagination of questions");
-            $table->json('theme')->nullable();
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
             $table->foreignId('client_id')->constrained('clients');

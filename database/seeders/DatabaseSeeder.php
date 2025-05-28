@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             SubscriptionSeeder::class,
             UsageTrackingSeeder::class,
             BillingSeeder::class,
+            EventsSeeder::class,
+            ThemeSeeder::class,
             UserSeeder::class,
         ]);
     }

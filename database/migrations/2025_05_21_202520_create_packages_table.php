@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('package_name', 50)->unique();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
         });
     }
