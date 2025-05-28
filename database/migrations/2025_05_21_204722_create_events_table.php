@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['nps', 'ces', 'csat'])->index()->comment("NPS (Net Promoter Score), CSAT (Customer Satisfaction), and CES (Customer Effort Score)");
+            $table->enum('type', ['nps', 'ces', 'csat'])->comment("NPS (Net Promoter Score), CSAT (Customer Satisfaction), and CES (Customer Effort Score)");
+            $table->index('type');
             $table->string('name', 100);
-            $table->unsignedBigInteger('channel_id');
             $table->unsignedBigInteger('bucket_id')->comment('Questions list under bucket');
             $table->enum('context', ['visitor', 'subscriber','rate'])->comment('Type feedback');
             $table->string('description', 200)->nullable();
             $table->enum('lang', ['en', 'bn'])->default("bn");
             $table->boolean('status')->default(false);
-            $table->softDeletes();
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
+            $table->foreignId('client_id')->constrained('clients');
             $table->timestamps();
-            $table->foreign('channel_id')->references('id')->on('channels');
+            $table->softDeletes();
         });
     }
 

@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('usage_limits', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('package_id');
+            $table->foreignId('package_id')->constrained('packages');
             $table->enum('limit_type', ['daily', 'monthly', 'yearly']);
             $table->integer('limit_value');
             $table->string('feature_name', 100);
-            $table->foreign('package_id')->references('id')->on('packages');
-            $table->unique(['package_id', 'limit_type', 'feature_name']);
+            // $table->unique(['package_id', 'limit_type', 'feature_name']);
             $table->timestamps();
         });
     }

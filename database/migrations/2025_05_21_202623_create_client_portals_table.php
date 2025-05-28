@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('client_portals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->string('subdomain', 100)->unique();
+            $table->text('subdomain')->unique();
             $table->boolean('is_active')->default(true);
+            $table->foreignId('client_id')->constrained('clients');
             $table->timestamps();
-            $table->foreign('client_id')->references('id')->on('clients');
+            // $table->foreign('client_id')->references('id')->on('clients');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_portals');
+        // Schema::dropIfExists('client_portals');
     }
 };

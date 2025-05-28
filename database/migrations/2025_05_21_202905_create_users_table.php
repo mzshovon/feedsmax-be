@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->string('username', 50)->unique();
-            $table->string('email', 100)->unique();
+            $table->string('username', 50);
+            $table->string('email', 100);
+            $table->unique('username');
+            $table->unique('email');
             $table->string('password_hash', 255);
             $table->enum('role', 
             [
@@ -30,8 +31,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login')->nullable();
             $table->rememberToken();
+            $table->foreignId('client_id')->constrained('clients');
             $table->timestamps();
-            $table->foreign('client_id')->references('id')->on('clients');
+            // $table->foreign('client_id')->references('id')->on('clients');
         });
     }
 

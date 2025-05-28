@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app['db']->setDefaultConnection('mysql::write');
+        // $this->app['db']->setDefaultConnection('mysql::write');
     }
 
     /**
