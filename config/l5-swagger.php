@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'CFL(Closed Feedback Loop) API',
+                'title' => 'Feedsmax API',
             ],
 
             'routes' => [

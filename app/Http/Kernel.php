@@ -70,7 +70,6 @@ class Kernel extends HttpKernel
         'auth.app-key' => \App\Http\Middleware\ValidateAppKeyFromHeader::class,
         'limit.url' => \App\Http\Middleware\RateLimitToURL::class,
         'generic' => \App\Http\Middleware\GenericMiddleware::class,
-        'guest.event' => \App\Http\Middleware\GuestEventMiddleware::class,
         'query.logger' => \App\Http\Middleware\QueryLoggerMiddleware::class,
     ];
 }

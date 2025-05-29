@@ -12,7 +12,7 @@ return [
         App\Services\Contracts\CMS\StatusServiceInterface::class => App\Services\CMS\StatusService::class,
         App\Services\Contracts\CMS\SectionServiceInterface::class => App\Services\CMS\SectionService::class,
         App\Services\Contracts\CMS\FeedbackServiceInterface::class => App\Services\CMS\FeedbackService::class,
-        App\Services\Contracts\CMS\GroupServiceInterface::class => App\Services\CMS\GroupService::class,
+        App\Services\Contracts\CMS\BucketServiceInterface::class => App\Services\CMS\BucketService::class,
         App\Services\Contracts\CMS\ThemeServiceInterface::class => App\Services\CMS\ThemeService::class,
     ],
 ];

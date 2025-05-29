@@ -5,10 +5,10 @@ namespace App\Services\CMS;
 use App\Entity\GroupResponseEntity;
 use App\Repositories\GroupRepo;
 use App\Repositories\QuestionRepo;
-use App\Services\Contracts\CMS\GroupServiceInterface;
+use App\Services\Contracts\CMS\BucketServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 
-class GroupService implements GroupServiceInterface
+class BucketService implements BucketServiceInterface
 {
     // Your service class code here
 	public function __construct(
@@ -25,9 +25,9 @@ class GroupService implements GroupServiceInterface
         return $data;
     }
 
-	public function getGroupById(int $id)
+	public function getBucketById(int $id)
     {
-        $data = $this->response($this->groupRepo->getGroupById($id));
+        $data = $this->response($this->groupRepo->getBucketById($id));
         return $data;
     }
 
@@ -94,7 +94,7 @@ class GroupService implements GroupServiceInterface
      *
      * @return array
      */
-    public function getQuestionsByGroupId(int $id): array
+    public function getQuestionsByBucketId(int $id): array
     {
         return $this->questionRepo->getQuestionListForCMSByGroupId($id);
     }

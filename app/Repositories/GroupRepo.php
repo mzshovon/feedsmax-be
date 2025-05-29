@@ -41,7 +41,7 @@ class GroupRepo
      *
      * @return Model
      */
-    public function getGroupById(int $group_id, $instance_type = "read", array $selected_columns = ["*"]): Model|null
+    public function getBucketById(int $group_id, $instance_type = "read", array $selected_columns = ["*"]): Model|null
     {
         $cacheKey = self::GROUP_CACHE_KEY . $group_id;
         if (Cache::has($cacheKey)) {

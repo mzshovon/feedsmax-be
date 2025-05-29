@@ -7,17 +7,17 @@ use App\Http\Requests\DeleteRequest;
 use App\Http\Requests\GroupStoreRequest;
 use App\Http\Requests\GroupUpdateRequest;
 use App\Http\Requests\QuestionsAttachToGroupRequest;
-use App\Services\Contracts\CMS\GroupServiceInterface;
+use App\Services\Contracts\CMS\BucketServiceInterface;
 use App\Traits\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class GroupController extends Controller
+class BucketController extends Controller
 {
     use ApiResponse;
 
     protected $repo;
 
-    public function __construct(GroupServiceInterface $repo)
+    public function __construct(BucketServiceInterface $repo)
     {
         $this->repo = $repo;
     }
@@ -54,7 +54,7 @@ class GroupController extends Controller
     public function show(string $id)
     {
         try {
-            $data = $this->repo->getGroupById($id);
+            $data = $this->repo->getBucketById($id);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getTrace(), 500);
@@ -87,17 +87,17 @@ class GroupController extends Controller
         }
     }
 
-    public function getQuestionsByGroup($groupId)
+    public function getQuestionsByBucket($bucketId)
     {
         try {
-            $data = $this->repo->getQuestionsByGroupId($groupId);
+            $data = $this->repo->getQuestionsByBucketId($bucketId);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getTrace(), 500);
         }
     }
 
-    public function attachQuestionsToGroup(QuestionsAttachToGroupRequest $request)
+    public function attachQuestionsToBucket(QuestionsAttachToGroupRequest $request)
     {
         try {
             $data = $this->repo->attachQuestions($request->all());

@@ -47,7 +47,7 @@ class QuestionService implements QuestionServiceInterface
         if(isset($request['options'])){
             $request['options'] = json_encode($request['options']);
         }
-        // From CMS it will be confusing for user to add options for NPS rating. It will be manipulate from CFL-Backend.
+        // From CMS it will be confusing for user to add options for NPS rating. It will be manipulate from Feedsmax-Backend.
         if(!isset($request['options']) && in_array($request['selection_type'], $this->selectionListForAutoOptionsAdd)) {
             $request['options'] = json_encode(config("question.default_option_map.{$request['selection_type']}.options")) ?? null;
         }

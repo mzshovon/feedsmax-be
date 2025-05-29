@@ -2,12 +2,12 @@
 
 namespace App\Services\Contracts\CMS;
 
-interface GroupServiceInterface
+interface BucketServiceInterface
 {
     // Your repository interface code here
 	public function get();
 
-	public function getGroupById(int $id);
+	public function getBucketById(int $id);
 
 	public function store(array $request);
 
@@ -15,7 +15,7 @@ interface GroupServiceInterface
 
 	public function delete(int $id, array $request);
 
-	public function getQuestionsByGroupId(int $id);
+	public function getQuestionsByBucketId(int $id);
 
 	public function attachQuestions(array $request);
 

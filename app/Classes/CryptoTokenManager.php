@@ -16,7 +16,7 @@ class CryptoTokenManager
         "local" => "l",
     ];
     // Secret key for encryption
-    private string $secret_key = 'cfl';
+    private string $secret_key = 'feedsmax';
 
     /**
      * @param array $payloadItem

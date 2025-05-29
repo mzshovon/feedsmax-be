@@ -11,8 +11,8 @@ use Illuminate\Routing\Controller as BaseController;
  /**
      * @OA\Info(
      *      version="1.0.0",
-     *      title="CFL(Closed Feedback Loop)",
-     *      description="Swagger documentation for CFL endpoint initiated in app & web",
+     *      title="Feedsmax(Closed Feedback Loop)",
+     *      description="Swagger documentation for Feedsmax endpoint initiated in app & web",
      *      @OA\Contact(
      *          email="mohammad.moniruzzaman@brainstation-23.com"
      *      ),
@@ -39,7 +39,7 @@ class Controller extends BaseController
      */
     public function info(){
         $info = [
-            'application' => "CFL Backend",
+            'application' => "Feedsmax Backend",
             'version' => 'v1',
         ];
         return response()->json($info, Response::HTTP_OK);

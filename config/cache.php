@@ -127,6 +127,6 @@ return [
     |
     */
 
-    'prefix' => "cfl",
+    'prefix' => "feedsmax",
 
 ];

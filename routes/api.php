@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\CMS\CategorySubCategoryController;
+use App\Http\Controllers\Api\CMS\ChannelController;
 use App\Http\Controllers\Api\CMS\clientController;
 use App\Http\Controllers\Api\CMS\EventController as CMSEventController;
 use App\Http\Controllers\Api\CMS\FeedbackController;
-use App\Http\Controllers\Api\CMS\GroupController;
+use App\Http\Controllers\Api\CMS\BucketController;
 use App\Http\Controllers\Api\CMS\QuestionController as CMSQuestionController;
 use App\Http\Controllers\Api\CMS\RuleController;
 use App\Http\Controllers\Api\CMS\SectionController;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| be assigned to the "api" middleware bucket. Make something great!
 |
 */
 
@@ -37,9 +38,9 @@ Route::prefix('v1')->group(function () {
 
     // Version 1 APIs for feedback
     Route::group(["middleware" => ["generic", "query.logger"]], function () {
-        Route::post('/event/{client}/{event}', [EventController::class, 'trigger'])->middleware(['auth.app-key', 'guest.event']);
-        Route::get('/questions/{client}/{event}/{uuid}', [QuestionController::class, 'questions'])->middleware('auth.uuid');
-        Route::post('/feedback/{client}/{event}/{uuid}', [QuestionController::class, 'feedback'])->middleware('auth.uuid');
+        Route::post('/event/{client}/{channel}/{event}', [EventController::class, 'trigger'])->middleware(['auth.app-key']);
+        Route::get('/questions/{client}/{channel}/{event}/{token}', [QuestionController::class, 'questions'])->middleware('auth.uuid');
+        Route::post('/feedback/{client}/{channel}/{event}/{token}', [QuestionController::class, 'feedback'])->middleware('auth.uuid');
     });
 
     // API for CMS Panel
@@ -47,8 +48,9 @@ Route::prefix('v1')->group(function () {
 
         Route::resources([
             'clients' => ClientController::class,
+            'channels' => ChannelController::class,
             'events' => CMSEventController::class,
-            'groups' => GroupController::class,
+            'buckets' => BucketController::class,
             'questions' => CMSQuestionController::class,
             'categories-subcategories' => CategorySubCategoryController::class,
             'sentiment-mappers' => SentimentMapperController::class,
@@ -62,18 +64,18 @@ Route::prefix('v1')->group(function () {
         Route::get('/event/client/{client}', [EventController::class, 'getEventsByclientTag']);
         Route::post('/event/attach-rule', [EventController::class, 'attachRuleToEvent']);
 
-        // Groups Routes
-        Route::put('/group/attach-questions', [GroupController::class, 'attachQuestionsToGroup']);
+        // Buckets Routes
+        Route::put('/bucket/attach-questions', [BucketController::class, 'attachQuestionsToBucket']);
 
         // Questions Routes
         Route::get('/question/event/{eventId}', [EventController::class, 'getQuestionsByEvent']);
-        Route::get('/question/group/{groupId}', [GroupController::class, 'getQuestionsByGroup']);
+        Route::get('/question/bucket/{bucketId}', [BucketController::class, 'getQuestionsByBucket']);
         Route::get('/selection-types', [CMSQuestionController::class, 'getSelectionTypes']);
 
         // Rules Routes
-        Route::get('/rules/list-for-selection', [RuleController::class, 'getRulesForSelection']);
-        Route::put('/rules/update', [RuleController::class, 'updateRule']);
-        Route::get('/rules/{eventId}', [EventController::class, 'getRulesByEvent']);
+        Route::get('/quarantine-rules/list-for-selection', [RuleController::class, 'getRulesForSelection']);
+        Route::put('/quarantine-rules/update', [RuleController::class, 'updateRule']);
+        Route::get('/quarantine-rules/{eventId}', [EventController::class, 'getRulesByEvent']);
 
         // Sentiment Routes
         Route::get('sentiment-mapper/categroies', [SentimentMapperController::class, 'category']);

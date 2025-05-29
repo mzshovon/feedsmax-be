@@ -142,7 +142,7 @@ class QuestionService implements QuestionServiceInterface
             if(isset($question['range']) && $question['selection_type'] !== ChoiceType::NPS->value)
                 $new[$question['range']][] = $question;
         }
-        $groupInfo = $this->groupRepo->getGroupById($groupId);
+        $groupInfo = $this->groupRepo->getBucketById($groupId);
         if($groupInfo && $groupInfo->topQuestion) {
             // If top question id found
             $nps = json_decode($groupInfo->topQuestion->toJson(), true); // Typo set for array to covert array model -> json -> array
