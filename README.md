@@ -1,3 +1,5 @@
+![Logo](gitsrc/Logo.png)
+
 # Feedsmax Microservice
 
 
