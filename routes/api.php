@@ -39,7 +39,8 @@ Route::prefix('v1')->group(function () {
     // Version 1 APIs for feedback
     Route::group(["middleware" => ["generic", "query.logger"]], function () {
         Route::post('/event/{client}/{channel}/{event}', [EventController::class, 'trigger'])->middleware(['auth.app-key']);
-        Route::get('/questions/{client}/{channel}/{event}/{token}', [QuestionController::class, 'questions'])->middleware('auth.uuid');
+        Route::get('/questions/{client}/{channel}/{event}/{token}', [QuestionController::class, 'questions']);
+        // Route::get('/questions/{client}/{channel}/{event}/{token}', [QuestionController::class, 'questions'])->middleware('auth.uuid');
         Route::post('/feedback/{client}/{channel}/{event}/{token}', [QuestionController::class, 'feedback'])->middleware('auth.uuid');
     });
 

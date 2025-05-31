@@ -28,10 +28,10 @@ class QuestionController extends Controller
     public function questions(Request $request): JsonResponse
     {
         try {
-            $attemptId = $request->attemptId ?? null;
+            $striveId = $request->striveId ?? null;
             $channel = $request->channel ?? null;
-            $msisdn = $request->msisdn ?? null;
-            $data = $this->repo->questionList($attemptId, $channel, $msisdn, $request->url());
+            $referenceId = $request->referenceId ?? null;
+            $data = $this->repo->questionList($striveId, $channel, $referenceId, $request->url());
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_GONE);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), null, 500);
@@ -45,7 +45,7 @@ class QuestionController extends Controller
     public function feedback(FeedbackRequest $request): JsonResponse
     {
         try {
-            $data = $this->repo->processResponseFromQuestion($request->all());
+            $data = $this->repo->processFeedback($request->all());
             return $this->success($data, Response::HTTP_OK);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), null, 500);

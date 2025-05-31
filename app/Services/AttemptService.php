@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Jobs\UpdateTablesJob;
-use App\Repositories\AttemptRepo;
+use App\Repositories\StriveRepo;
 use App\Repositories\HitRepo;
-use App\Repositories\TriggerRepo;
+use App\Repositories\EventRepo;
 use Carbon\Carbon;
 
 class AttemptService
@@ -13,8 +13,8 @@ class AttemptService
     private string $secondaryChannelMapperFunc = "has_secondary_group";
 
     public function __construct(
-        private AttemptRepo $repo,
-        private readonly TriggerRepo $triggerRepo,
+        private StriveRepo $repo,
+        private readonly EventRepo $EventRepo,
         private readonly HitRepo $hitRepo
     ) {
     }
@@ -45,9 +45,9 @@ class AttemptService
         int $channelId,
         string $event,
         int $eventId,
-        string $groupId,
+        string $bucketId,
         array $matchedRules = [],
-        int $nextGroupId = null,
+        int $nextbucketId = null,
         ): array
     {
         $data['channel'] = $channel;
@@ -56,12 +56,12 @@ class AttemptService
         $data['event_id'] = $eventId;
         $data['view'] = false;
         $data['trigger_matches'] = json_encode($matchedRules);
-        $data['group_id'] = $groupId;
+        $data['group_id'] = $bucketId;
 
-        if($nextGroupId) {
+        if($nextbucketId) {
             $hasLastAttempt = $this->repo->getLastAttempt($request['msisdn'], $channelId, $eventId);
-            if($hasLastAttempt && $hasLastAttempt->group_id != $nextGroupId) {
-                $data['group_id'] = $nextGroupId;
+            if($hasLastAttempt && $hasLastAttempt->group_id != $nextbucketId) {
+                $data['group_id'] = $nextbucketId;
             }
         }
         // From request
@@ -100,25 +100,37 @@ class AttemptService
     }
 
     /**
-     * @param int $id
-     *
-     * @return int
+     * @param int $striveId
+     * 
+     * @return array
      */
-    public function getTriggerInfoFromId(int $id): array
+    public function getEventInfoFromId(int $striveId): array
     {
-        $triggerId = null;
-        $groupId = null;
-        $numOfQuestions = null;
+        $eventId = null;
+        $bucketId = null;
+        $numOfQuestionsList = null;
         $channelName = null;
-        $event = null;
+        $eventName = null;
 
-        $attemptInfoById = $this->repo->getAttemptInfoById($id);
-        if ($attemptInfoById) {
-            [$triggerId, $lang, $channelId, $retry, $groupId, $nextGroupId, $groupName, $numOfQuestions] = $this->triggerRepo->getTriggerInfo($attemptInfoById->event, $attemptInfoById->channel, 'read');
-            $channelName = $attemptInfoById->channel;
-            $event = $attemptInfoById->event;
-            $groupId = $attemptInfoById->group_id;
+        $striveInfoById = $this->repo->getStriveInfoById($striveId);
+        if ($striveInfoById) {
+            [
+                $eventId, 
+                $lang, 
+                $channelId, 
+                $retry, 
+                $bucketId, 
+                $bucketName, 
+                $pagination
+            ] = $this->EventRepo->getEventInfo(
+                $striveInfoById->event, 
+                $striveInfoById->channel, 
+                'read'
+            );
+            $channelName = $striveInfoById->channel;
+            $event = $striveInfoById->event;
+            $bucketId = $striveInfoById->group_id;
         }
-        return [$triggerId, $groupId, $numOfQuestions, $channelName, $event];
+        return [$eventId, $bucketId, $pagination, $channelName, $eventName, $lang];
     }
 }

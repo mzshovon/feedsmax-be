@@ -82,7 +82,7 @@ class QuestionResponseEntity
      * @param int $numOfQuestions
      * @return $this
      */
-    public function setNumOfQuestions(int $numOfQuestions): QuestionResponseEntity{
+    public function setPagination(int $numOfQuestions): QuestionResponseEntity{
         $this->data['num_of_questions'] = $numOfQuestions;
         return $this;
     }

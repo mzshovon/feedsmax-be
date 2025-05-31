@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('options')->nullable();
             $table->string('score_range')->nullable();
             $table->integer('ref_id')->nullable();
+            $table->integer('ref_val')->nullable();
             $table->integer('parent_id')->nullable();
             $table->integer('order');
             $table->boolean('status');

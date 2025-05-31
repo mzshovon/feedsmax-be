@@ -6,7 +6,7 @@ use App\Entity\EventResponseEntityForCMS;
 use App\Models\TriggerQuestionnaire;
 use App\Repositories\QuestionRepo;
 use App\Repositories\RulesRepo;
-use App\Repositories\TriggerRepo;
+use App\Repositories\EventRepo;
 use App\Services\Contracts\CMS\EventServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +14,7 @@ class EventService implements EventServiceInterface
 {
 
     public function __construct(
-        private TriggerRepo $eventRepo,
+        private EventRepo $eventRepo,
         private readonly QuestionRepo $questionRepo,
         private readonly RulesRepo $rulesRepo
     ) {
@@ -105,7 +105,7 @@ class EventService implements EventServiceInterface
      */
     public function getEventsByChannelTag(string $channelTag): array
     {
-        $data = $this->eventRepo->getTriggerInfoByChannelTag($channelTag);
+        $data = $this->eventRepo->getEventInfoByChannelTag($channelTag);
         return $data;
     }
 

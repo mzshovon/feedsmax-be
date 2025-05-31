@@ -3,17 +3,17 @@
 namespace App\Services\RuleService;
 
 use App\Models\Attempt;
-use App\Repositories\AttemptRepo;
+use App\Repositories\StriveRepo;
 use App\Services\Contracts\RuleEngineInterface;
 use Carbon\Carbon;
 
 class SurveyRejectChannelDay implements RuleEngineInterface
 {
-    private AttemptRepo $attemptRepo;
+    private StriveRepo $StriveRepo;
 
     public function __construct()
     {
-        $this->attemptRepo = new AttemptRepo(new Attempt());
+        $this->StriveRepo = new StriveRepo(new Attempt());
     }
 
     /**
@@ -49,7 +49,7 @@ class SurveyRejectChannelDay implements RuleEngineInterface
     private function dayFromLastRejectAttemptToToday(string $msisdn, string $channel, int $trigger_id): int|null
     {
         $dayFromLastRejectedAttemptToToday = null;
-        $lastRejectedAttemptFromHit = $this->attemptRepo->getLastAttempt($msisdn, $channel, $trigger_id, true);
+        $lastRejectedAttemptFromHit = $this->StriveRepo->getLastAttempt($msisdn, $channel, $trigger_id, true);
         if ($lastRejectedAttemptFromHit && $lastRejectedAttemptFromHit->created_at) {
             $dayFromLastRejectedAttemptToToday = now()->diffInDays(Carbon::parse($lastRejectedAttemptFromHit->created_at));
         }

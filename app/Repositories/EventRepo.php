@@ -4,12 +4,12 @@ namespace App\Repositories;
 
 use App\Enums\CrudEnum;
 use App\Events\PopulateChangeLog;
-use App\Models\Trigger;
+use App\Models\Event;
 //use App\Proxy\CacheProxy as Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
-class TriggerRepo
+class EventRepo
 {
     const TRIGGER_CACHE_KEY = 'trigger_records';
     const IDENTIFIER = 'event';
@@ -19,7 +19,7 @@ class TriggerRepo
      */
     public Model $model;
 
-    public function __construct(Trigger $model)
+    public function __construct(Event $model)
     {
         $this->model = $model;
     }
@@ -31,7 +31,7 @@ class TriggerRepo
      *
      * @return array
      */
-    public function getTriggerInfo(string $event, string $channel, string $instance_type = 'write'): array
+    public function getEventInfo(string $event, string $channel, string $instance_type = 'write'): array
     {
         //Cache check starts from here
         try{
@@ -213,7 +213,7 @@ class TriggerRepo
         return $questionSyncOperation;
     }
 
-    public function getTriggerInfoByChannelTag(string $channelTag): array
+    public function getEventInfoByChannelTag(string $channelTag): array
     {
         return $this->model::with("channel")->whereHas('channel', function ($q) use ($channelTag) {
             $q->where('tag', $channelTag);

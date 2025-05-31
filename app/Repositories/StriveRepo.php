@@ -2,36 +2,35 @@
 
 namespace App\Repositories;
 
-use App\Models\Attempt;
+use App\Models\Strive;
 use App\Services\LoggerService;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
-class AttemptRepo
+class StriveRepo
 {
     public $model;
-    const ATTEMPT_MSISDN_CHANNEL_KEY = "attempt_{msisdn}_{channel}_{trigger}";
+    const STRIVE_REFERENCE_CHANNEL_KEY = "strive_{reference}_{channel}_{trigger}";
 
     private $logStoreTTL = 15 * 24 * 60 * 60;
 
 
-    public function __construct(Attempt $model)
+    public function __construct(Strive $model)
     {
         $this->model = $model;
     }
 
     /**
-     * @param string $msisdn
+     * @param string $reference
      * @param string $eventName
      * @param string $channelName
      *
      * @return string|null
      */
-    public function getUUIDByMsisdn(string $msisdn, string $eventName, string $channelName): string|null
+    public function getUUIDByReference(string $reference, string $eventName, string $channelName): string|null
     {
-        return $this->model::whereMsisdn($msisdn)->whereEvent($eventName)->whereChannel($channelName)->whereView(1)->first()->uuid ?? null;
+        return $this->model::whereReference($reference)->whereEvent($eventName)->whereChannel($channelName)->whereView(1)->first()->uuid ?? null;
     }
 
     /**
@@ -39,13 +38,13 @@ class AttemptRepo
      *
      * @return Model|null
      */
-    public function getAttemptInfoById(int $id): Model|null
+    public function getStriveInfoById(int $id): Model|null
     {
         return $this->model::with("groups")->whereId($id)->first() ?? null;
     }
 
     /**
-     * @param string $msisdn
+     * @param string $reference
      * @param string $channel
      * @param int $event_id
      * @param bool $checkReject
@@ -53,14 +52,14 @@ class AttemptRepo
      *
      * @return Model
      */
-    public function getLastAttempt(string $msisdn, int $channel_id, int $event_id, bool $checkReject = false, string $instance_type = "read"): Model|null
+    public function getLastStrive(string $reference, int $channel_id, int $event_id, bool $checkReject = false, string $instance_type = "read"): Model|null
     {
         try {
             //Cache check starts from here
             $get_key = str_replace(
-                ['{msisdn}', '{channel}', '{trigger}'],
-                [$msisdn, $channel_id, $event_id],
-                self::ATTEMPT_MSISDN_CHANNEL_KEY
+                ['{reference}', '{channel}', '{trigger}'],
+                [$reference, $channel_id, $event_id],
+                self::STRIVE_REFERENCE_CHANNEL_KEY
             );
             if (Cache::has($get_key)) {
                 $data = Cache::get($get_key);
@@ -72,7 +71,7 @@ class AttemptRepo
                 return $this->model::on('mysql::' . $instance_type)
                     ->with("groups")
                     ->where([
-                        'msisdn' => $msisdn,
+                        'reference' => $reference,
                         'channel_id' => $channel_id,
                         'event_id' => $event_id
                     ])
@@ -90,7 +89,7 @@ class AttemptRepo
             return $this->model::on('mysql::' . $instance_type)
                 ->with("groups")
                 ->where([
-                    'msisdn' => $msisdn,
+                    'reference' => $reference,
                     'channel_id' => $channel_id,
                     'event_id' => $event_id
                 ])
@@ -114,11 +113,11 @@ class AttemptRepo
     public function save(array $request): Model
     {
         try {
-            $attempt = $this->model::on('mysql::write')->create($request);
+            $strive = $this->model::on('mysql::write')->create($request);
             if(isset($request['event_id']) && isset($request['channel_id'])) {
-                $this->storeAttemptInfoInCache($request['msisdn'], $request['channel_id'], $request['channel_id'], $attempt);
+                $this->storeStriveInfoInCache($request['reference'], $request['channel_id'], $request['channel_id'], $strive);
             }
-            return $attempt;
+            return $strive;
 
         } catch (\Exception $ex) {
             $loggerService = app(LoggerService::class);
@@ -136,52 +135,52 @@ class AttemptRepo
     public function update(string $param, string $value, array $request): bool
     {
         try {
-            $attempt = $this->model::on('mysql::write')->where($param, $value)->update($request);
-            if($attempt) {
-                $attemptModel = $this->model->where($param, $value)->first();
-                $this->updateAttemptInfoInCache($attemptModel);
+            $strive = $this->model::on('mysql::write')->where($param, $value)->update($request);
+            if($strive) {
+                $striveModel = $this->model->where($param, $value)->first();
+                $this->updateStriveInfoInCache($striveModel);
             }
-            return $attempt;
+            return $strive;
         } catch (\Exception $e) {
             $loggerService = app(LoggerService::class);
             $loggerService->exception($e->getMessage());
-            throw new Exception("Attempt update exception");
-            // $attempt = $this->model::on('mysql::write')->where($param, $value)->update($request);
-            // return $attempt;
+            throw new Exception("Strive update exception");
+            // $strive = $this->model::on('mysql::write')->where($param, $value)->update($request);
+            // return $strive;
         }
 
     }
 
     /**
-     * @param string $msisdn
+     * @param string $reference
      * @param int $channel
      * @param int $trigger
-     * @param Model $attempt
+     * @param Model $strive
      *
      * @return void
      */
-    private function storeAttemptInfoInCache(string $msisdn, int $channel, int $trigger, Model $attempt) : void
+    private function storeStriveInfoInCache(string $reference, int $channel, int $trigger, Model $strive) : void
     {
         $store_key = str_replace(
-            ['{msisdn}', '{channel}', '{trigger}'],
-            [$msisdn, $channel, $trigger],
-            self::ATTEMPT_MSISDN_CHANNEL_KEY
+            ['{reference}', '{channel}', '{trigger}'],
+            [$reference, $channel, $trigger],
+            self::STRIVE_REFERENCE_CHANNEL_KEY
         );
-        Cache::put($store_key, $attempt, config('cache.ttl.attempt') ?? $this->logStoreTTL);
+        Cache::put($store_key, $strive, config('cache.ttl.strive') ?? $this->logStoreTTL);
     }
 
     /**
-     * @param Model $attempt
+     * @param Model $strive
      *
      * @return void
      */
-    private function updateAttemptInfoInCache(Model $attempt):void
+    private function updateStriveInfoInCache(Model $strive):void
     {
         $store_key = str_replace(
-            ['{msisdn}', '{channel}', '{trigger}'],
-            [$attempt->msisdn, $attempt->channel_id, $attempt->event_id],
-            self::ATTEMPT_MSISDN_CHANNEL_KEY
+            ['{reference}', '{channel}', '{trigger}'],
+            [$strive->reference, $strive->channel_id, $strive->event_id],
+            self::STRIVE_REFERENCE_CHANNEL_KEY
         );
-        Cache::put($store_key, $attempt, config('cache.ttl.attempt') ?? $this->logStoreTTL);
+        Cache::put($store_key, $strive, config('cache.ttl.strive') ?? $this->logStoreTTL);
     }
 }

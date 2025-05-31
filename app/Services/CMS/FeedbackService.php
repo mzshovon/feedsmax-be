@@ -2,7 +2,7 @@
 
 namespace App\Services\CMS;
 
-use App\Repositories\AttemptRepo;
+use App\Repositories\StriveRepo;
 use App\Repositories\FeedbackRepo;
 use App\Services\Contracts\CMS\FeedbackServiceInterface;
 
@@ -11,7 +11,7 @@ class FeedbackService implements FeedbackServiceInterface
     // Your service class code here
 	public function __construct(
         private readonly FeedbackRepo $feedbackRepo,
-        private readonly AttemptRepo $attemptRepo,
+        private readonly StriveRepo $StriveRepo,
     ){}
 
 	public function get(){}
@@ -32,7 +32,7 @@ class FeedbackService implements FeedbackServiceInterface
         $storeFeedback = $this->feedbackRepo->storeFeedback($feedback);
         if($storeFeedback) {
             if($comment){
-                $this->attemptRepo->update("id", $attemptId, ["remarks" => $comment]);
+                $this->StriveRepo->update("id", $attemptId, ["remarks" => $comment]);
             }
             return true;
         }

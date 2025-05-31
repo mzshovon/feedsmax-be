@@ -15,8 +15,8 @@ class QuestionService implements QuestionServiceInterface
 {
     private array|null $nps;
 
-    const CHANNEL_INDEX_IN_URL = 6;
-    const EVENT_INDEX_IN_URL = 7;
+    const CHANNEL_INDEX_IN_URL = 7;
+    const EVENT_INDEX_IN_URL = 8;
 
     public function __construct(
         private readonly QuestionRepo $questionRepo,
@@ -29,35 +29,34 @@ class QuestionService implements QuestionServiceInterface
     }
 
     /**
-     * @param int $attemptId
+     * @param int $striveId
      * @param string $channel
-     * @param string $msisdn
+     * @param string $referenceId
      * @param string $url
-     *
+     * 
      * @return array
      */
-    public function questionList(int $attemptId, string $channel, string $msisdn, string $url): array
+    public function questionList(int $striveId, string $channel, string $referenceId, string $url): array
     {
         try {
             $questions = [];
             $nps = [];
-            $theme = config('app.default_theme');
             $parsedUrl = explode("/", $url);
             $redirectionLink = "";
 
             $channel = $parsedUrl[self::CHANNEL_INDEX_IN_URL];
             $event = $parsedUrl[self::EVENT_INDEX_IN_URL];
 
+            dd($channel, $event);
+
             // TODO: Need to Update the Indexing & Redis Queue
-            //$this->attemptService->updateViewStatusByAttemptId($attemptId);
-            [$triggerId, $groupId, $numOfQuestions, $channelName, $eventName] = $this->attemptService->getTriggerInfoFromId($attemptId);
+            [$eventId, $groupId, $pagination, $channelName, $eventName, $language] = $this->attemptService->getEventInfoFromId($striveId);
 
             if(($channelName === $channel) && ($eventName === $event)) {
-                if ($triggerId && $attemptId) {
+                if ($eventId && $striveId) {
                     $questions = $this->questionRepo->getAllQuestionsByGroupId($groupId);
                     [$questions, $nps] = $this->npsAndQuestionDivider($questions, $groupId);
-                    $theme = ThemeService::theme($channel);
-                    $redirectionLink = $this->redirectionRepo->getRedirectionLinkByAttemptId($attemptId, $channel);
+                    $redirectionLink = $this->redirectionRepo->getRedirectionLinkByAttemptId($striveId, $channel);
                 }
             }
 
@@ -66,8 +65,7 @@ class QuestionService implements QuestionServiceInterface
                 $attemptId,
                 $questions,
                 $nps,
-                $theme,
-                $numOfQuestions ?? 1,
+                $pagination ?? 1,
                 $redirectionLink
             );
         } catch (\Exception $e) {
@@ -79,7 +77,7 @@ class QuestionService implements QuestionServiceInterface
     /**
      * @throws Exception
      */
-    public function processResponseFromQuestion(array $request): bool
+    public function processFeedback(array $request): bool
     {
         try {
             $this->responseService->store($request);
@@ -96,7 +94,7 @@ class QuestionService implements QuestionServiceInterface
      * @param array $questions
      * @param array $nps
      * @param array $theme
-     * @param int|null $numOfQuestions
+     * @param int|null $pagination
      * @param string $redirectionLink
      *
      * @return array
@@ -106,8 +104,7 @@ class QuestionService implements QuestionServiceInterface
         int|null $attemptId,
         array $questions,
         array $nps,
-        array $theme,
-        ?int $numOfQuestions = 1,
+        ?int $pagination = 1,
         string $redirectionLink,
         ): array
     {
@@ -118,8 +115,7 @@ class QuestionService implements QuestionServiceInterface
                 ->setTriggerId($triggerId)
                 ->setAttemptId($attemptId)
                 ->setRedirectionLink($redirectionLink)
-                ->setNumOfQuestions($numOfQuestions)
-                ->setTheme($theme)
+                ->setPagination($pagination)
                 ->setChoiceTypes($choiceTypes)
                 ->setNps($nps)
                 ->setQuestions($questions)

@@ -6,28 +6,34 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Trigger extends Model
+class Event extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'type',
-        'event',
+        'name',
         'context',
         'description',
+        'client_id',
         'channel_id',
-        'group_id',
+        'bucket_id',
         'lang',
         'status'
     ];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 
     public function channel()
     {
         return $this->belongsTo(Channel::class);
     }
 
-    public function group()
+    public function bucket()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Bucket::class);
     }
 }

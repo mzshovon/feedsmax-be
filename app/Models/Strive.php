@@ -5,39 +5,38 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Attempt extends Model
+class Strive extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'msisdn',
+        'reference_id',
         'device_id',
-        'group_id',
+        'bucket_id',
         'event',
-        'event_id',
+        'client_id',
         'channel',
-        'channel_id',
+        'client',
         'platform',
-        'loyalty',
-        'lang',
-        'trigger_matches',
+        'tier',
+        'language',
+        'quarantine_rule_set',
         'device_name',
-        'model',
-        'app_version',
-        'os_version',
-        'user_network',
+        'device_model',
+        'user_app_version',
+        'user_os_version',
+        'network',
         'view',
         'tried_at',
-        'nps_score',
+        'submitte_at',
+        'score',
         'arpu',
         'customer_behavior',
-        'district',
-        'city',
-        'thana',
+        'geo_location',
+        'ip',
         'feedsmax_status',
-        'pick_agent_id',
-        'feedsmax_status_updated_at',
-        'remarks',
+        'updated_at',
+        'created_at',
         'extra',
     ];
 
@@ -53,8 +52,8 @@ class Attempt extends Model
         });
     }
 
-    public function groups()
+    public function bucket()
     {
-        return $this->hasOne(Group::class, 'id', 'group_id');
+        return $this->hasOne(Bucket::class, 'id', 'bucket_id');
     }
 }

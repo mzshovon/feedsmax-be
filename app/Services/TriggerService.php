@@ -7,7 +7,7 @@ use App\Entity\TriggerResponseEntity;
 use App\Enums\QuotaType;
 use App\Repositories\HitRepo;
 use App\Repositories\RedirectionRepo;
-use App\Repositories\TriggerRepo;
+use App\Repositories\EventRepo;
 use App\Services\Contracts\TriggerServiceInterface;
 use App\Services\RuleService\RulesMediator;
 use App\Services\StrategyService\LocationQuotaCheckStrategy;
@@ -24,7 +24,7 @@ class TriggerService implements TriggerServiceInterface
     public function __construct(
         private readonly HitService $hitService,
         private readonly AttemptService $attemptService,
-        public TriggerRepo $triggerRepo,
+        public EventRepo $EventRepo,
         public HitRepo $hitRepo,
         public RedirectionRepo $redirectionRepo
     ) {
@@ -44,7 +44,7 @@ class TriggerService implements TriggerServiceInterface
 
         $msisdn = formatMsisdnInLocal($request['msisdn']);
 
-        [$triggerId, $lang, $channelId, $retry, $groupId, $nextGroupId, $groupName] = $this->triggerRepo->getTriggerInfo($event, $channel, 'read');
+        [$triggerId, $lang, $channelId, $retry, $groupId, $nextGroupId, $groupName] = $this->EventRepo->getEventInfo($event, $channel, 'read');
 
         try{
             if (!is_null($triggerId) && !is_null($channelId) && !is_null($groupId)) {

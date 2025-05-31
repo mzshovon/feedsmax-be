@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\CrudEnum;
 use App\Events\PopulateChangeLog;
+use App\Models\Bucket;
 use App\Models\Group;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ class GroupRepo
     const QUESTION_TABLE_NAME = 'questionnaires';
     const IDENTIFIER = 'group';
 
-    public function __construct(Group $model)
+    public function __construct(Bucket $model)
     {
         $this->model = $model;
     }

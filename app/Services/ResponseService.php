@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Enums\ChoiceType;
 use App\Models\Status;
-use App\Repositories\AttemptRepo;
+use App\Repositories\StriveRepo;
 use App\Repositories\GroupRepo;
 use App\Repositories\ResponseRepo;
 
@@ -14,7 +14,7 @@ class ResponseService
 
     public function __construct(
         private ResponseRepo $repo,
-        private AttemptRepo $attemptRepo,
+        private StriveRepo $StriveRepo,
         private GroupRepo $groupRepo,
     ) {
     }
@@ -31,7 +31,7 @@ class ResponseService
             $storeResponse = $this->repo->store($responses);
             if($storeResponse) {
                 $dataForUpdate = $this->attemptUpdateDataBuilder($request);
-                $this->attemptRepo->update('id', $request['attemptId'], $dataForUpdate);
+                $this->StriveRepo->update('id', $request['attemptId'], $dataForUpdate);
             }
             return $storeResponse;
         } catch (\Exception $ex) {

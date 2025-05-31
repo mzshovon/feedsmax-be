@@ -4,20 +4,20 @@ namespace App\Services\RuleService;
 
 use App\Models\Attempt;
 use App\Models\Trigger;
-use App\Repositories\AttemptRepo;
-use App\Repositories\TriggerRepo;
+use App\Repositories\StriveRepo;
+use App\Repositories\EventRepo;
 use App\Services\Contracts\RuleEngineInterface;
 use Carbon\Carbon;
 
 class HasSecondaryGroup implements RuleEngineInterface
 {
-    private AttemptRepo $attemptRepo;
-    private TriggerRepo $triggerRepo;
+    private StriveRepo $StriveRepo;
+    private EventRepo $EventRepo;
 
     public function __construct()
     {
-        $this->attemptRepo = new AttemptRepo(new Attempt());
-        $this->triggerRepo = new TriggerRepo(new Trigger());
+        $this->StriveRepo = new StriveRepo(new Attempt());
+        $this->EventRepo = new EventRepo(new Trigger());
     }
 
     /**
@@ -46,9 +46,9 @@ class HasSecondaryGroup implements RuleEngineInterface
      */
     private function hasSecondaryGroup(string $msisdn, string $channel, int $trigger_id): bool
     {
-        $nextGroupId = $this->triggerRepo->getEventById($trigger_id)->next_group_id;
+        $nextGroupId = $this->EventRepo->getEventById($trigger_id)->next_group_id;
         if($nextGroupId) {
-            $data = $this->attemptRepo->getLastAttempt($msisdn, $channel, $trigger_id);
+            $data = $this->StriveRepo->getLastAttempt($msisdn, $channel, $trigger_id);
             if(!$data) {
                 return true;
             }

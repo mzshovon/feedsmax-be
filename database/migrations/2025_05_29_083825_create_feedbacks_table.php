@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('feedbacks', function (Blueprint $table) {
             $table->id();
-            $table->string('msisdn', 11);
+            $table->string('reference_id', 100);
             $table->foreignId('strive_id')->constrained('strives');
             $table->foreignId('question_id')->constrained('questions');
             $table->string('feedback_plain', 1000)->nullable();

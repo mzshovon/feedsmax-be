@@ -13,22 +13,25 @@ class Channel extends Model
     protected $fillable = [
         "tag",
         "name",
-        "app_key",
-        "app_secret",
-        "jwks",
+        "retry",
         "status",
-        "number_of_questions",
-        "redirection_link",
-        "theme"
+        "pagination",
+        "client_id",
+        "theme_id"
     ];
 
-    public function triggers()
+    public function client()
     {
-        return $this->hasMany(Trigger::class);
+        return $this->belongsTo(Client::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 
     public function themes()
     {
-        return $this->hasOne(Theme::class, "id", "theme");
+        return $this->hasOne(Theme::class, "id", "theme_id");
     }
 }
