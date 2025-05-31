@@ -16,20 +16,20 @@ class QuestionResponseEntity
     }
 
     /**
-     * @param string $triggerId
+     * @param string $eventId
      * @return $this
      */
-    public function setEventId(string $triggerId): QuestionResponseEntity{
-        $this->data['trigger_id'] = $triggerId;
+    public function setEventId(string $eventId): QuestionResponseEntity{
+        $this->data['event_id'] = $eventId;
         return $this;
     }
 
     /**
-     * @param string $triggerId
+     * @param string $eventId
      * @return $this
      */
-    public function setStriveId(string $attemptId): QuestionResponseEntity{
-        $this->data['attempt_id'] = $attemptId;
+    public function setStriveId(string $striveId): QuestionResponseEntity{
+        $this->data['strive_id'] = $striveId;
         return $this;
     }
 
@@ -43,21 +43,21 @@ class QuestionResponseEntity
     }
 
     /**
-     * @param array $choiceTypes
+     * @param array $fieldTypes
      *
      * @return $this
      */
-    public function setFieldTypes(array $choiceTypes): QuestionResponseEntity{
-        $this->data['choice_types'] = $choiceTypes;
+    public function setFieldTypes(array $fieldTypes): QuestionResponseEntity{
+        $this->data['choice_types'] = $fieldTypes;
         return $this;
     }
     /**
-     * @param array|null $nps
+     * @param array|null $scoreRangeField
      *
      * @return $this
      */
-    public function setNps(array|null $nps): QuestionResponseEntity{
-        $this->data['nps'] = $nps;
+    public function setScoreRangeField(array|null $scoreRangeField): QuestionResponseEntity{
+        $this->data['scoreRangeField'] = $scoreRangeField;
         return $this;
     }
     /**
@@ -70,11 +70,11 @@ class QuestionResponseEntity
     }
 
     /**
-     * @param int $numOfQuestions
+     * @param int $pagination
      * @return $this
      */
-    public function setPagination(int $numOfQuestions): QuestionResponseEntity{
-        $this->data['num_of_questions'] = $numOfQuestions;
+    public function setPagination(int $pagination): QuestionResponseEntity{
+        $this->data['num_of_questions'] = $pagination;
         return $this;
     }
 

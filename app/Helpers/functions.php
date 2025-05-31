@@ -139,21 +139,4 @@ if (!function_exists('getTableNameFromQuery')) {
 
         return null; // If no match found
     }
-
-}
-if (!function_exists('matchEnumCase')) {
-    /**
-     * @param string $value
-     * 
-     * @return array|null
-     */
-    function matchEnumCase(string $value): ?array
-    {
-        foreach (FieldType::cases() as $case) {
-            if (str_contains($value, $case->value)) {
-                return [$case]; // Return as array
-            }
-        }
-        return null;
-    }
 }

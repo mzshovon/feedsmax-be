@@ -12,7 +12,9 @@ use Exception;
 
 class QuestionService implements QuestionServiceInterface
 {
-    private array|null $nps;
+    const SCORE_IDENTIFIER = "rating";
+
+    private array|null $scoreRangeField;
 
     const CHANNEL_INDEX_IN_URL = 7;
     const EVENT_INDEX_IN_URL = 8;
@@ -24,7 +26,7 @@ class QuestionService implements QuestionServiceInterface
         private readonly RedirectionRepo $redirectionRepo,
         private readonly GroupRepo $groupRepo,
     ) {
-        $this->nps = config('app.nps') ?? null;
+        $this->scoreRangeField = config('app.nps') ?? null;
     }
 
     /**
@@ -38,8 +40,8 @@ class QuestionService implements QuestionServiceInterface
     public function questionList(int $striveId, string $channel, string $referenceId, string $url): array
     {
         try {
-            $questions = [];
-            $nps = [];
+            $questionList = [];
+            $scoreRangeField = [];
             $parsedUrl = explode("/", $url);
             $redirectionLink = "www.youtube.com";
             $channel = $parsedUrl[self::CHANNEL_INDEX_IN_URL];
@@ -48,17 +50,17 @@ class QuestionService implements QuestionServiceInterface
             // TODO: Need to Update the Indexing & Redis Queue
             [
                 $eventId, 
-                $groupId, 
+                $bucketId, 
                 $pagination, 
                 $channelName, 
                 $eventName, 
+                $questions,
                 $language
             ] = $this->attemptService->getEventInfoFromId($striveId);
 
-            if(($channelName === $channel) && ($eventName === $event)) {
-                if ($eventId && $striveId) {
-                    $questions = $this->questionRepo->getAllQuestionsByGroupId($groupId);
-                    [$questions, $nps] = $this->npsAndQuestionDivider($questions, $groupId);
+            if(($channelName === $channel) && ($eventName === $event) ) {
+                if ($eventId && $striveId && !empty($questions)) {
+                    [$questionList, $scoreRangeField] = $this->scoreAndQuestionDivider($questions, $bucketId);
                     // $redirectionLink = $this->redirectionRepo->getRedirectionLinkByStriveId($striveId, $channel);
                 }
             }
@@ -66,8 +68,8 @@ class QuestionService implements QuestionServiceInterface
             return $this->response(
                 $eventId,
                 $striveId,
-                $questions,
-                $nps,
+                $questionList,
+                $scoreRangeField,
                 $pagination ?? 1,
                 $redirectionLink
             );
@@ -95,7 +97,7 @@ class QuestionService implements QuestionServiceInterface
      * @param int|null $eventId
      * @param int|null $striveId
      * @param array $questions
-     * @param array $nps
+     * @param array $scoreRangeField
      * @param array $theme
      * @param int|null $pagination
      * @param string $redirectionLink
@@ -106,7 +108,7 @@ class QuestionService implements QuestionServiceInterface
         int|null $eventId,
         int|null $striveId,
         array $questions,
-        array $nps,
+        array $scoreRangeField,
         ?int $pagination = 1,
         string $redirectionLink,
         ): array
@@ -120,7 +122,7 @@ class QuestionService implements QuestionServiceInterface
                 ->setRedirectionLink($redirectionLink)
                 ->setPagination($pagination)
                 ->setFieldTypes($FieldTypes)
-                ->setNps($nps)
+                ->setScoreRangeField($scoreRangeField)
                 ->setQuestions($questions)
                 ->build();
         }
@@ -129,32 +131,35 @@ class QuestionService implements QuestionServiceInterface
 
     /**
      * @param array $questions
-     * @param int $groupId
+     * @param int $bucketId
      *
      * @return array
      */
-    private function npsAndQuestionDivider(array $questions, int $groupId) : array
+    private function scoreAndQuestionDivider(array $questions, int $bucketId) : array
     {
         $new = [];
-        $nps = [];
+        $scoreRangeField = [];
         foreach ($questions as $question) {
-            if(isset($question['range']) && matchEnumCase($question['selection_type']))
-                $new[$question['range']][] = $question;
-        }
-        $groupInfo = $this->groupRepo->getBucketById($groupId);
-        if($groupInfo && $groupInfo->topQuestion) {
-            // If top question id found
-            $nps = json_decode($groupInfo->topQuestion->toJson(), true); // Typo set for array to covert array model -> json -> array
-            if(!isset($nps['nps_rating_mapping'])) {
-                $nps['nps_rating_mapping'] = config('app.nps.nps_rating_mapping');
+            if(str_contains($question['field_type'], SELF::SCORE_IDENTIFIER)) {
+                $scoreRangeField = $question;
+            } else {
+                $new[$question['score_range'] ?? "0-0"][] = $question;
             }
-        } else if ($groupInfo && $groupInfo->type && !$groupInfo->topQuestion) {
-            // If type  found but top question id not found
-            $nps = config("app.".strtolower($groupInfo->type)) ?? $this->nps;
-        } else {
-            // If type and top question id not found
-            $nps = $this->nps;
         }
-        return [$new, $nps];
+        // $groupInfo = $this->groupRepo->getBucketById($bucketId);
+        // if($groupInfo && $groupInfo->topQuestion) {
+        //     // If top question id found
+        //     $scoreRangeField = json_decode($groupInfo->topQuestion->toJson(), true); // Typo set for array to covert array model -> json -> array
+        //     if(!isset($scoreRangeField['nps_rating_mapping'])) {
+        //         $scoreRangeField['nps_rating_mapping'] = config('app.nps.nps_rating_mapping');
+        //     }
+        // } else if ($groupInfo && $groupInfo->type && !$groupInfo->topQuestion) {
+        //     // If type  found but top question id not found
+        //     $scoreRangeField = config("app.".strtolower($groupInfo->type)) ?? $this->scoreRangeField;
+        // } else {
+        //     // If type and top question id not found
+        //     $scoreRangeField = $this->scoreRangeField;
+        // }
+        return [$new, $scoreRangeField];
     }
 }

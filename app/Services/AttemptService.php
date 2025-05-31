@@ -105,6 +105,7 @@ class AttemptService
         $pagination = null;
         $channelName = null;
         $language = null;
+        $questions = [];
 
         $striveInfoById = $this->repo->getStriveInfoById($striveId);
         if ($striveInfoById) {
@@ -124,7 +125,16 @@ class AttemptService
             $channelName = $striveInfoById->channel;
             $channelId = $channelId;
             $eventName = $striveInfoById->event;
+            $questions = $striveInfoById->bucket->questions->toArray();
         }
-        return [$eventId, $bucketId, $pagination, $channelName, $eventName, $language];
+        return [
+            $eventId, 
+            $bucketId, 
+            $pagination, 
+            $channelName, 
+            $eventName, 
+            $questions, 
+            $language
+        ];
     }
 }
