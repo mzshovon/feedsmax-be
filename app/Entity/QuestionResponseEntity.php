@@ -47,7 +47,7 @@ class QuestionResponseEntity
      *
      * @return $this
      */
-    public function setChoiceTypes(array $choiceTypes): QuestionResponseEntity{
+    public function setFieldTypes(array $choiceTypes): QuestionResponseEntity{
         $this->data['choice_types'] = $choiceTypes;
         return $this;
     }

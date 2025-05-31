@@ -21,12 +21,16 @@ class DatabaseSeeder extends Seeder
             PackageSeeder::class,
             UsageLimitSeeder::class,
             ClientSeeder::class,
+            ChannelSeeder::class,
             ClientPortalSeeder::class,
             SubscriptionSeeder::class,
             UsageTrackingSeeder::class,
             BillingSeeder::class,
             EventsSeeder::class,
             ThemeSeeder::class,
+            QuestionSeeder::class,
+            BucketSeeder::class,
+            BucketQuestionsSeeder::class,
             UserSeeder::class,
         ]);
     }

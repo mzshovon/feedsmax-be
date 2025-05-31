@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\ChoiceType;
+use App\Enums\FieldType;
 use App\Enums\SentimentCategory;
 use Illuminate\Support\Facades\Cache;
 
@@ -29,7 +29,7 @@ if (!function_exists('getSelectionTypes')) {
      */
     function getSelectionTypes():array
     {
-        return array_column(ChoiceType::cases(), 'value');
+        return array_column(FieldType::cases(), 'value');
     }
 }
 
@@ -138,5 +138,22 @@ if (!function_exists('getTableNameFromQuery')) {
         }
 
         return null; // If no match found
+    }
+
+}
+if (!function_exists('matchEnumCase')) {
+    /**
+     * @param string $value
+     * 
+     * @return array|null
+     */
+    function matchEnumCase(string $value): ?array
+    {
+        foreach (FieldType::cases() as $case) {
+            if (str_contains($value, $case->value)) {
+                return [$case]; // Return as array
+            }
+        }
+        return null;
     }
 }

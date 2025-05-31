@@ -6,28 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Questionnaire extends Model
+class Question extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         "question_en",
         "question_bn",
-        "selection_type",
+        "field_type",
         "options",
-        "range",
+        "score_range",
+        "ref_id",
+        "ref_val",
         "parent_id",
         "order",
         "status",
-        "nps_rating_mapping",
         "is_required"
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function groups()
+    public function buckets()
     {
-        return $this->belongsToMany(Group::class, 'group_questionnaires');
+        return $this->belongsToMany(Bucket::class, 'bucket_questions');
     }
 
     public function children()

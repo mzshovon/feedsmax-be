@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Entity\QuestionResponseEntity;
-use App\Enums\ChoiceType;
+use App\Enums\FieldType;
 use App\Repositories\GroupRepo;
 use App\Repositories\QuestionRepo;
 use App\Repositories\RedirectionRepo;
@@ -41,11 +41,9 @@ class QuestionService implements QuestionServiceInterface
             $questions = [];
             $nps = [];
             $parsedUrl = explode("/", $url);
-            $redirectionLink = "";
-
+            $redirectionLink = "www.youtube.com";
             $channel = $parsedUrl[self::CHANNEL_INDEX_IN_URL];
             $event = $parsedUrl[self::EVENT_INDEX_IN_URL];
-
 
             // TODO: Need to Update the Indexing & Redis Queue
             [
@@ -61,7 +59,6 @@ class QuestionService implements QuestionServiceInterface
                 if ($eventId && $striveId) {
                     $questions = $this->questionRepo->getAllQuestionsByGroupId($groupId);
                     [$questions, $nps] = $this->npsAndQuestionDivider($questions, $groupId);
-                    $redirectionLink = "www.youtube.com";
                     // $redirectionLink = $this->redirectionRepo->getRedirectionLinkByStriveId($striveId, $channel);
                 }
             }
@@ -116,13 +113,13 @@ class QuestionService implements QuestionServiceInterface
     {
         $data = [];
         if (!empty($questions)) {
-            $choiceTypes = getSelectionTypes();
+            $FieldTypes = getSelectionTypes();
             $data = (new QuestionResponseEntity())
                 ->setEventId($eventId)
                 ->setStriveId($striveId)
                 ->setRedirectionLink($redirectionLink)
                 ->setPagination($pagination)
-                ->setChoiceTypes($choiceTypes)
+                ->setFieldTypes($FieldTypes)
                 ->setNps($nps)
                 ->setQuestions($questions)
                 ->build();
@@ -141,7 +138,7 @@ class QuestionService implements QuestionServiceInterface
         $new = [];
         $nps = [];
         foreach ($questions as $question) {
-            if(isset($question['range']) && $question['selection_type'] !== ChoiceType::NPS->value)
+            if(isset($question['range']) && matchEnumCase($question['selection_type']))
                 $new[$question['range']][] = $question;
         }
         $groupInfo = $this->groupRepo->getBucketById($groupId);

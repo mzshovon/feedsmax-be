@@ -14,17 +14,12 @@ class Bucket extends Model
         "description",
         "status",
         "type",
-        "nps_ques_id",
         "promoter_range"
     ];
 
     public function questions()
     {
-        return $this->belongsToMany(Questionnaire::class, 'group_questions');
+        return $this->belongsToMany(Question::class, 'bucket_questions');
     }
 
-    public function topQuestion()
-    {
-        return $this->hasOne(Questionnaire::class, 'id', 'nps_ques_id');
-    }
 }

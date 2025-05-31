@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Enums\CrudEnum;
 use App\Events\PopulateChangeLog;
-use App\Models\Questionnaire;
+use App\Models\Question;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,42 +13,42 @@ class QuestionRepo
     public $model;
     public $currentEnvironment;
     // public array $comparedEnvironment = ['production', 'local'];
-    private string $question_cache_key = 'questions_for_group_';
+    private string $question_cache_key = 'questions_for_bucket_';
     const IDENTIFIER = 'question';
 
-    public function __construct(Questionnaire $model)
+    public function __construct(Question $model)
     {
         $this->model = $model;
         $this->currentEnvironment = config('app.env');
     }
 
-    public function getAllQuestionsByGroupId(int $groupId, string $instance_type= "read"): array
+    public function getAllQuestionsByBucketId(int $bucketId, string $instance_type= "read"): array
     {
         try {
-            $questionsFromCache = $this->getQuestionsFromCacheByGroupId($groupId);
+            $questionsFromCache = $this->getQuestionsFromCacheByBucketId($bucketId);
             if (!empty($questionsFromCache)) {
                 return $questionsFromCache;
             }
             $questions = $this->model::on('mysql::' . $instance_type)->with('children')
-                ->whereRelation('groups', 'groups.id', $groupId)
+                ->whereRelation('buckets', 'buckets.id', $bucketId)
                 ->where('status', 1)
                 ->orderBy('order')
                 ->get()
-                // ->groupBy('range')
+                // ->bucketBy('range')
                 ->toArray();
             if (!empty($questions)) {
-                $this->storeQuestionsInCacheByGroupId($groupId, $questions);
+                $this->storeQuestionsInCacheByBucketId($bucketId, $questions);
                 return $questions;
             }
 
             return [];
         } catch (\Exception $ex) {
             $questions = $this->model::on('mysql::' . $instance_type)->with('children')
-                ->whereRelation('groups', 'groups.id', $groupId)
+                ->whereRelation('buckets', 'buckets.id', $bucketId)
                 ->where('status', 1)
                 ->orderBy('order')
                 ->get()
-                // ->groupBy('range')
+                // ->bucketBy('range')
                 ->toArray();
             if (!empty($questions)) {
                 return $questions;
@@ -88,14 +88,14 @@ class QuestionRepo
     }
 
     /**
-     * @param int $groupId
+     * @param int $bucketId
      *
      * @return array
      */
-    public function getQuestionListForCMSByGroupId(int $groupId): array
+    public function getQuestionListForCMSByBucketId(int $bucketId): array
     {
         $questions = $this->model::with('children')
-            ->whereRelation('groups', 'groups.id', $groupId)
+            ->whereRelation('buckets', 'buckets.id', $bucketId)
             ->orderBy('order')
             ->get()
             ->toArray();
@@ -215,14 +215,14 @@ class QuestionRepo
         }
     }
     /**
-     * @param int $groupId
+     * @param int $bucketId
      * @return array
      */
-    private function getQuestionsFromCacheByGroupId(int $groupId): array
+    private function getQuestionsFromCacheByBucketId(int $bucketId): array
     {
         try {
-            if (Cache::has($this->question_cache_key . $groupId)) {
-                return json_decode(Cache::get($this->question_cache_key . $groupId), true);
+            if (Cache::has($this->question_cache_key . $bucketId)) {
+                return json_decode(Cache::get($this->question_cache_key . $bucketId), true);
             }
             return [];
         } catch (\Exception $ex) {
@@ -232,13 +232,13 @@ class QuestionRepo
     }
 
     /**
-     * @param int $groupId
+     * @param int $bucketId
      *
      * @return array|bool
      */
-    private function storeQuestionsInCacheByGroupId(int $groupId, array $questions): void
+    private function storeQuestionsInCacheByBucketId(int $bucketId, array $questions): void
     {
         $ttl = config('cache.ttl.questions');
-        Cache::put($this->question_cache_key . $groupId, json_encode($questions), $ttl);
+        Cache::put($this->question_cache_key . $bucketId, json_encode($questions), $ttl);
     }
 }
