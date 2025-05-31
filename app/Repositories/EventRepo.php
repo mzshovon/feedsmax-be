@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class EventRepo
 {
-    const TRIGGER_CACHE_KEY = 'trigger_records';
+    const EVENT_CACHE_KEY = 'event_records';
     const IDENTIFIER = 'event';
 
     /**
@@ -25,43 +25,46 @@ class EventRepo
     }
 
     /**
-     * @param string $event
+     * @param string $eventName
      * @param string $channel
      * @param string $instance_type
      *
      * @return array
      */
-    public function getEventInfo(string $event, string $channel, string $instance_type = 'write'): array
+    public function getEventInfo(
+        string $eventName, 
+        string $channel, 
+        string $instance_type = 'read'
+    ): array
     {
         //Cache check starts from here
         try{
-            if (Cache::has(self::TRIGGER_CACHE_KEY)) {
-                $data = Cache::get(self::TRIGGER_CACHE_KEY);
+            if (Cache::has(self::EVENT_CACHE_KEY)) {
+                $data = Cache::get(self::EVENT_CACHE_KEY);
                 if (!is_null($data)) {
-                    return $this->decodeTriggerDataToMatch($data, $event, $channel);
+                    return $this->decodeEventDataToMatch($data, $eventName, $channel);
                 }
             } else {
-                $ttl = config('cache.ttl.trigger');
-                $trigger = $this->model::on('mysql::' . $instance_type)
-                    ->with(['channel', 'group'])
+                $ttl = config('cache.ttl.event');
+                $eventData = $this->model::on('mysql::' . $instance_type)
+                    ->with(['bucket', 'channel'])
                     ->where("status", 1)
                     ->get()
                     ->toArray();
-                $event_channel_data = $this->hashmapEventChannel($trigger);
-                if (!empty($event_channel_data)) {
-                    Cache::put(self::TRIGGER_CACHE_KEY, json_encode($event_channel_data), $ttl);
+                $eventChannelData = $this->hashmapEventChannel($eventData);
+                if (!empty($eventChannelData)) {
+                    Cache::put(self::EVENT_CACHE_KEY, json_encode($eventChannelData), $ttl);
                 }
-                return $this->decodeTriggerDataToMatch($event_channel_data, $event, $channel);
+                return $this->decodeEventDataToMatch($eventChannelData, $eventName, $channel);
             }
         } catch (\Exception $ex){
-            $trigger = $this->model::on('mysql::' . $instance_type)
-                ->with(['channel', 'group'])
+            $eventData = $this->model::on('mysql::' . $instance_type)
+                ->with(['channel', 'bucket'])
                 ->get()
                 ->toArray();
-            $event_channel_data = $this->hashmapEventChannel($trigger);
-            return $this->decodeTriggerDataToMatch($event_channel_data, $event, $channel);
+            $eventChannelData = $this->hashmapEventChannel($eventData);
+            return $this->decodeEventDataToMatch($eventChannelData, $eventName, $channel);
         }
-
     }
 
     /**
@@ -74,7 +77,7 @@ class EventRepo
     {
         $event = $this->model::on('mysql::' . $instance_type)
             ->select($selected_columns)
-            ->with(['channel', 'group'])
+            ->with(['channel', 'bucket'])
             ->get()
             ->toArray();
         return $event;
@@ -90,7 +93,7 @@ class EventRepo
     public function getEventById(int $event_id, $instance_type = "read", array $selected_columns = ["*"]): Model|null
     {
         $event = $this->model::on('mysql::' . $instance_type)
-            ->with(['channel', 'group'])
+            ->with(['channel', 'bucket'])
             ->select($selected_columns)
             ->where("id", $event_id)
             ->first();
@@ -206,9 +209,9 @@ class EventRepo
      *
      * @return array
      */
-    public function attachRule(int $triggerId, array $questionIds, $instance_type = "read"): array
+    public function attachRule(int $eventId, array $questionIds, $instance_type = "read"): array
     {
-        $event = $this->model::on('mysql::'.$instance_type)->find($triggerId);
+        $event = $this->model::on('mysql::'.$instance_type)->find($eventId);
         $questionSyncOperation = $event->questionnaires()->sync($questionIds);
         return $questionSyncOperation;
     }
@@ -221,17 +224,19 @@ class EventRepo
     }
 
     /**
-     * @param string|array $encodedTriggerData
-     * @param string $event
+     * @param string|array $encodedEventData
+     * @param string $eventName
      * @param string $channelTag
+     * 
      * @return array
      */
-    private function decodeTriggerDataToMatch(string|array $encodedTriggerData, string $event, string $channelTag): array
+    private function decodeEventDataToMatch(string|array $encodedEventData, string $eventName, string $channelTag): array
     {
-        $decodedTriggerData = (is_array($encodedTriggerData)) ? $encodedTriggerData : json_decode($encodedTriggerData, true);
-        if (array_key_exists($event, $decodedTriggerData)) {
-            if (array_key_exists($channelTag, $decodedTriggerData[$event])) {
-                return $decodedTriggerData[$event][$channelTag];
+        $decodedEventData = (is_array($encodedEventData)) ? $encodedEventData : json_decode($encodedEventData, true);
+        
+        if (array_key_exists($eventName, $decodedEventData)) {
+            if (array_key_exists($channelTag, $decodedEventData[$eventName])) {
+                return $decodedEventData[$eventName][$channelTag];
             }
         }
         return [null, null, null, null, null, null, null, null];
@@ -246,16 +251,15 @@ class EventRepo
     {
         $data = [];
         $failedResult = [null, null, null, null, null, null, null];
-        foreach ($event as $key => $value) {
-            $data[$value['event']][$value['channel']['tag']] = ($value['channel']['status'] == 1) ? [
+        foreach ($event as $value) {
+            $data[$value['name']][$value['channel']['tag']] = ($value['channel']['status'] == 1) ? [
                                                                 $value['id'],
                                                                 $value['lang'],
                                                                 $value['channel_id'],
                                                                 $value['channel']['retry'],
-                                                                $value['group_id'],
-                                                                $value['next_group_id'] ?? null,
-                                                                $value['group']['name'],
-                                                                $value['channel']['num_of_questions']
+                                                                $value['bucket_id'],
+                                                                $value['bucket']['name'],
+                                                                $value['channel']['pagination']
                                                             ] : $failedResult;
         }
         return $data;

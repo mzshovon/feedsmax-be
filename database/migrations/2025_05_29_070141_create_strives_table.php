@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('device_id', 300)->nullable();
             $table->foreignId('bucket_id')->constrained("buckets");
             $table->foreignId('client_id')->constrained("clients");
+            $table->foreignId('channel_id')->constrained("channels");
+            $table->foreignId('event_id')->constrained("events");
             $table->string('event', 250);
             $table->string('channel', 100);
             $table->string('client', 100);

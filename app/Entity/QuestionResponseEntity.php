@@ -19,7 +19,7 @@ class QuestionResponseEntity
      * @param string $triggerId
      * @return $this
      */
-    public function setTriggerId(string $triggerId): QuestionResponseEntity{
+    public function setEventId(string $triggerId): QuestionResponseEntity{
         $this->data['trigger_id'] = $triggerId;
         return $this;
     }
@@ -28,17 +28,8 @@ class QuestionResponseEntity
      * @param string $triggerId
      * @return $this
      */
-    public function setAttemptId(string $attemptId): QuestionResponseEntity{
+    public function setStriveId(string $attemptId): QuestionResponseEntity{
         $this->data['attempt_id'] = $attemptId;
-        return $this;
-    }
-
-    /**
-     * @param array $theme
-     * @return $this
-     */
-    public function setTheme(array $theme): QuestionResponseEntity{
-        $this->data['theme'] = $theme;
         return $this;
     }
 

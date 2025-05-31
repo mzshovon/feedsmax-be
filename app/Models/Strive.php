@@ -13,6 +13,8 @@ class Strive extends Model
         'reference_id',
         'device_id',
         'bucket_id',
+        'channel_id',
+        'event_id',
         'event',
         'client_id',
         'channel',
@@ -55,5 +57,20 @@ class Strive extends Model
     public function bucket()
     {
         return $this->hasOne(Bucket::class, 'id', 'bucket_id');
+    }
+
+    public function channel()
+    {
+        return $this->hasOne(Channel::class, 'id', 'channel_id');
+    }
+
+    public function client()
+    {
+        return $this->hasOne(Client::class, 'id', 'client_id');
+    }
+
+    public function event()
+    {
+        return $this->hasOne(Event::class, 'id', 'event_id');
     }
 }

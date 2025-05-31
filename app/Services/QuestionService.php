@@ -7,7 +7,6 @@ use App\Enums\ChoiceType;
 use App\Repositories\GroupRepo;
 use App\Repositories\QuestionRepo;
 use App\Repositories\RedirectionRepo;
-use App\Services\CMS\ThemeService;
 use App\Services\Contracts\QuestionServiceInterface;
 use Exception;
 
@@ -47,22 +46,29 @@ class QuestionService implements QuestionServiceInterface
             $channel = $parsedUrl[self::CHANNEL_INDEX_IN_URL];
             $event = $parsedUrl[self::EVENT_INDEX_IN_URL];
 
-            dd($channel, $event);
 
             // TODO: Need to Update the Indexing & Redis Queue
-            [$eventId, $groupId, $pagination, $channelName, $eventName, $language] = $this->attemptService->getEventInfoFromId($striveId);
+            [
+                $eventId, 
+                $groupId, 
+                $pagination, 
+                $channelName, 
+                $eventName, 
+                $language
+            ] = $this->attemptService->getEventInfoFromId($striveId);
 
             if(($channelName === $channel) && ($eventName === $event)) {
                 if ($eventId && $striveId) {
                     $questions = $this->questionRepo->getAllQuestionsByGroupId($groupId);
                     [$questions, $nps] = $this->npsAndQuestionDivider($questions, $groupId);
-                    $redirectionLink = $this->redirectionRepo->getRedirectionLinkByAttemptId($striveId, $channel);
+                    $redirectionLink = "www.youtube.com";
+                    // $redirectionLink = $this->redirectionRepo->getRedirectionLinkByStriveId($striveId, $channel);
                 }
             }
 
             return $this->response(
-                $triggerId,
-                $attemptId,
+                $eventId,
+                $striveId,
                 $questions,
                 $nps,
                 $pagination ?? 1,
@@ -89,8 +95,8 @@ class QuestionService implements QuestionServiceInterface
     }
 
     /**
-     * @param int|null $triggerId
-     * @param int|null $attemptId
+     * @param int|null $eventId
+     * @param int|null $striveId
      * @param array $questions
      * @param array $nps
      * @param array $theme
@@ -100,8 +106,8 @@ class QuestionService implements QuestionServiceInterface
      * @return array
      */
     private function response(
-        int|null $triggerId,
-        int|null $attemptId,
+        int|null $eventId,
+        int|null $striveId,
         array $questions,
         array $nps,
         ?int $pagination = 1,
@@ -112,8 +118,8 @@ class QuestionService implements QuestionServiceInterface
         if (!empty($questions)) {
             $choiceTypes = getSelectionTypes();
             $data = (new QuestionResponseEntity())
-                ->setTriggerId($triggerId)
-                ->setAttemptId($attemptId)
+                ->setEventId($eventId)
+                ->setStriveId($striveId)
                 ->setRedirectionLink($redirectionLink)
                 ->setPagination($pagination)
                 ->setChoiceTypes($choiceTypes)

@@ -40,7 +40,7 @@ class StriveRepo
      */
     public function getStriveInfoById(int $id): Model|null
     {
-        return $this->model::with("groups")->whereId($id)->first() ?? null;
+        return $this->model::with("bucket")->whereId($id)->first() ?? null;
     }
 
     /**
@@ -69,7 +69,7 @@ class StriveRepo
                     return null;
             } else {
                 return $this->model::on('mysql::' . $instance_type)
-                    ->with("groups")
+                    ->with("bucket")
                     ->where([
                         'reference' => $reference,
                         'channel_id' => $channel_id,
@@ -87,7 +87,7 @@ class StriveRepo
             $loggerService = app(LoggerService::class);
             $loggerService->exception($ex->getMessage());
             return $this->model::on('mysql::' . $instance_type)
-                ->with("groups")
+                ->with("bucket")
                 ->where([
                     'reference' => $reference,
                     'channel_id' => $channel_id,

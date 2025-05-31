@@ -47,7 +47,6 @@ class AttemptService
         int $eventId,
         string $bucketId,
         array $matchedRules = [],
-        int $nextbucketId = null,
         ): array
     {
         $data['channel'] = $channel;
@@ -58,12 +57,6 @@ class AttemptService
         $data['trigger_matches'] = json_encode($matchedRules);
         $data['group_id'] = $bucketId;
 
-        if($nextbucketId) {
-            $hasLastAttempt = $this->repo->getLastAttempt($request['msisdn'], $channelId, $eventId);
-            if($hasLastAttempt && $hasLastAttempt->group_id != $nextbucketId) {
-                $data['group_id'] = $nextbucketId;
-            }
-        }
         // From request
         $data['msisdn'] = $request['msisdn'];
         $data['platform'] = isset($request['platform'])
@@ -107,20 +100,21 @@ class AttemptService
     public function getEventInfoFromId(int $striveId): array
     {
         $eventId = null;
-        $bucketId = null;
-        $numOfQuestionsList = null;
-        $channelName = null;
         $eventName = null;
+        $bucketId = null;
+        $pagination = null;
+        $channelName = null;
+        $language = null;
 
         $striveInfoById = $this->repo->getStriveInfoById($striveId);
         if ($striveInfoById) {
             [
-                $eventId, 
-                $lang, 
-                $channelId, 
-                $retry, 
-                $bucketId, 
-                $bucketName, 
+                $eventId,
+                $language,
+                $channelId,
+                $retry,
+                $bucketId,
+                $bucketName,
                 $pagination
             ] = $this->EventRepo->getEventInfo(
                 $striveInfoById->event, 
@@ -128,9 +122,9 @@ class AttemptService
                 'read'
             );
             $channelName = $striveInfoById->channel;
-            $event = $striveInfoById->event;
-            $bucketId = $striveInfoById->group_id;
+            $channelId = $channelId;
+            $eventName = $striveInfoById->event;
         }
-        return [$eventId, $bucketId, $pagination, $channelName, $eventName, $lang];
+        return [$eventId, $bucketId, $pagination, $channelName, $eventName, $language];
     }
 }
