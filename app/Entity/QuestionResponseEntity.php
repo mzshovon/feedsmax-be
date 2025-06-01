@@ -74,7 +74,7 @@ class QuestionResponseEntity
      * @return $this
      */
     public function setPagination(int $pagination): QuestionResponseEntity{
-        $this->data['num_of_questions'] = $pagination;
+        $this->data['pagination'] = $pagination;
         return $this;
     }
 

@@ -87,36 +87,6 @@ if (!function_exists('deleteCacheDataByTableName')) {
     }
 }
 
-if (!function_exists('generateRandomString')) {
-    /**
-     * @param string $tableName
-     *
-     * @return void
-     */
-    function generateRandomString($maxLength = 8) {
-
-        $upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $lowerCase = 'abcdefghijklmnopqrstuvwxyz';
-        $numbers = '0123456789';
-
-        $randomString = '';
-        $randomString .= $upperCase[random_int(0, strlen($upperCase) - 1)];
-        $randomString .= $lowerCase[random_int(0, strlen($lowerCase) - 1)];
-        $randomString .= $numbers[random_int(0, strlen($numbers) - 1)];
-
-        $remainingLength = random_int(0, $maxLength - 4);
-
-        $allChars = $upperCase . $lowerCase . $numbers;
-        for ($i = 0; $i < $remainingLength; $i++) {
-            $randomString .= $allChars[random_int(0, strlen($allChars) - 1)];
-        }
-
-        $randomString = str_shuffle($randomString);
-
-        return $randomString;
-    }
-}
-
 if (!function_exists('getTableNameFromQuery')) {
     /**
      * @param string $query

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Entity\QuestionResponseEntity;
-use App\Enums\FieldType;
 use App\Repositories\GroupRepo;
 use App\Repositories\QuestionRepo;
 use App\Repositories\RedirectionRepo;
@@ -13,9 +12,6 @@ use Exception;
 class QuestionService implements QuestionServiceInterface
 {
     const SCORE_IDENTIFIER = "rating";
-
-    private array|null $scoreRangeField;
-
     const CHANNEL_INDEX_IN_URL = 7;
     const EVENT_INDEX_IN_URL = 8;
 
@@ -25,9 +21,7 @@ class QuestionService implements QuestionServiceInterface
         private readonly ResponseService $responseService,
         private readonly RedirectionRepo $redirectionRepo,
         private readonly GroupRepo $groupRepo,
-    ) {
-        $this->scoreRangeField = config('app.nps') ?? null;
-    }
+    ) {}
 
     /**
      * @param int $striveId
@@ -46,8 +40,6 @@ class QuestionService implements QuestionServiceInterface
             $redirectionLink = "www.youtube.com";
             $channel = $parsedUrl[self::CHANNEL_INDEX_IN_URL];
             $event = $parsedUrl[self::EVENT_INDEX_IN_URL];
-
-            // TODO: Need to Update the Indexing & Redis Queue
             [
                 $eventId, 
                 $bucketId, 
@@ -61,7 +53,6 @@ class QuestionService implements QuestionServiceInterface
             if(($channelName === $channel) && ($eventName === $event) ) {
                 if ($eventId && $striveId && !empty($questions)) {
                     [$questionList, $scoreRangeField] = $this->scoreAndQuestionDivider($questions, $bucketId);
-                    // $redirectionLink = $this->redirectionRepo->getRedirectionLinkByStriveId($striveId, $channel);
                 }
             }
 
@@ -137,29 +128,30 @@ class QuestionService implements QuestionServiceInterface
      */
     private function scoreAndQuestionDivider(array $questions, int $bucketId) : array
     {
-        $new = [];
+        $questionSet = [];
         $scoreRangeField = [];
         foreach ($questions as $question) {
+            $questionList = [];
+            if($question) {
+                $questionList = [
+                    "id" => $question['id'],
+                    "question_en" => $question['question_en'],
+                    "question_another_lang" => $question['question_another_lang'],
+                    "field_type" => $question['field_type'],
+                    "options" => $question['options'],
+                    "ref_id" => $question['ref_id'],
+                    "ref_val" => $question['ref_val'],
+                    "parent_id" => $question['parent_id'],
+                    "status" => $question['status'],
+                    "order" => $question['order'],
+                ];
+            }
             if(str_contains($question['field_type'], SELF::SCORE_IDENTIFIER)) {
-                $scoreRangeField = $question;
+                $scoreRangeField = $questionList;
             } else {
-                $new[$question['score_range'] ?? "0-0"][] = $question;
+                $questionSet[$question['score_range'] ?? "0-0"][] = $questionList;
             }
         }
-        // $groupInfo = $this->groupRepo->getBucketById($bucketId);
-        // if($groupInfo && $groupInfo->topQuestion) {
-        //     // If top question id found
-        //     $scoreRangeField = json_decode($groupInfo->topQuestion->toJson(), true); // Typo set for array to covert array model -> json -> array
-        //     if(!isset($scoreRangeField['nps_rating_mapping'])) {
-        //         $scoreRangeField['nps_rating_mapping'] = config('app.nps.nps_rating_mapping');
-        //     }
-        // } else if ($groupInfo && $groupInfo->type && !$groupInfo->topQuestion) {
-        //     // If type  found but top question id not found
-        //     $scoreRangeField = config("app.".strtolower($groupInfo->type)) ?? $this->scoreRangeField;
-        // } else {
-        //     // If type and top question id not found
-        //     $scoreRangeField = $this->scoreRangeField;
-        // }
-        return [$new, $scoreRangeField];
+        return [$questionSet, $scoreRangeField];
     }
 }
