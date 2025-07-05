@@ -14,5 +14,6 @@ return [
         App\Services\Contracts\CMS\FeedbackServiceInterface::class => App\Services\CMS\FeedbackService::class,
         App\Services\Contracts\CMS\BucketServiceInterface::class => App\Services\CMS\BucketService::class,
         App\Services\Contracts\CMS\ThemeServiceInterface::class => App\Services\CMS\ThemeService::class,
+        App\Services\Contracts\CMS\ClientServiceInterface::class => App\Services\CMS\ClientService::class,
     ],
 ];

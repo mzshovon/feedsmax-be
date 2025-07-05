@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\CMS\CategorySubCategoryController;
 use App\Http\Controllers\Api\CMS\ChannelController;
-use App\Http\Controllers\Api\CMS\clientController;
+use App\Http\Controllers\Api\CMS\ClientController;
 use App\Http\Controllers\Api\CMS\EventController as CMSEventController;
 use App\Http\Controllers\Api\CMS\FeedbackController;
 use App\Http\Controllers\Api\CMS\BucketController;
