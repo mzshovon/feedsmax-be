@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Subscription extends Model
 {
     use HasFactory;
-
-    protected $primaryKey = 'subscription_id';
     
     protected $fillable = [
         'client_id',
@@ -32,7 +30,7 @@ class Subscription extends Model
      */
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id', 'client_id');
+        return $this->belongsTo(Client::class);
     }
 
     /**
@@ -40,7 +38,7 @@ class Subscription extends Model
      */
     public function package()
     {
-        return $this->belongsTo(Package::class, 'package_id', 'package_id');
+        return $this->belongsTo(Package::class);
     }
 
     /**
@@ -48,7 +46,7 @@ class Subscription extends Model
      */
     public function billings()
     {
-        return $this->hasMany(Billing::class, 'subscription_id', 'subscription_id');
+        return $this->hasMany(Billing::class);
     }
 
     /**
@@ -56,7 +54,7 @@ class Subscription extends Model
      */
     public function usageTracking()
     {
-        return $this->hasMany(UsageTracking::class, 'subscription_id', 'subscription_id');
+        return $this->hasMany(UsageTracking::class);
     }
 
     /**

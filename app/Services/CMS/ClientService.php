@@ -58,7 +58,18 @@ class ClientService implements ClientServiceInterface
      */
     private function fillableData(array $request): array{
         $data = [];
-        $fillable = ['company_tag', 'company_name', 'contact_name', 'email', 'phone', 'address', 'client_key', 'client_secret', 'status'];
+        $fillable = [
+            'company_tag', 
+            'company_name', 
+            'contact_name', 
+            'email', 
+            'phone', 
+            'address', 
+            'client_key', 
+            'client_secret', 
+            'status',
+            'subscriptions'
+        ];
         foreach($request as $key => $value){
             if(in_array($key, $fillable)){
                 $data[$key] = $value;
@@ -96,7 +107,11 @@ class ClientService implements ClientServiceInterface
                 'phone' => $client->phone,
                 'address' => $client->address,
                 'client_key' => $client->client_key,
-                'client_secret' => $client->client_secret,
+                'subscription_package_name' => $client->subscriptions[0]->package->package_name,
+                'auto_renewal_enabled' => $client->subscriptions[0]->is_auto_renew,
+                'quota_for_usage' => $client->subscriptions[0]?->package?->usageLimits?->toArray(),
+                'usage_tracking' => $client->usageTracking?->toArray(),
+                // 'client_secret' => $client->client_secret,
                 'status' => $client->status,
                 'created_at' => $client->created_at,
                 'updated_at' => $client->updated_at,

@@ -42,10 +42,10 @@ class ClientRepo
     public function getClientById(int $client_id, $instance_type = "read", array $selected_columns = ["*"]): Model|null
     {
         $client = $this->model::on('mysql::' . $instance_type)
+            ->with('subscriptions')
             ->select($selected_columns)
             ->where("id", $client_id)
             ->first();
-        dd($client);
         return $client;
     }
 
