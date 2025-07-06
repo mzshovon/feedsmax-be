@@ -127,6 +127,16 @@ class ClientService implements ClientServiceInterface
     {
         $data = [];
         if ($client) {
+            // Subscription data
+            $subscription_package_name = "N/A";
+            $auto_renewal_enabled = "N/A";
+            $quota_for_usage = "N/A";
+            // Usage tracking data
+            if($client->subscriptions->isNotEmpty()) {
+                $subscription_package_name = $client->subscriptions->first()?->package?->package_name ?? "N/A";
+                $auto_renewal_enabled = $client->subscriptions->first()?->is_auto_renew ?? "N/A";
+                $quota_for_usage = $client->subscriptions->first()?->package?->usageLimits?->toArray() ?? "N/A";
+            }
             $data = [
                 'id' => $client->id,
                 'company_tag' => $client->company_tag,
@@ -137,16 +147,15 @@ class ClientService implements ClientServiceInterface
                 'address' => $client->address,
                 'client_key' => $client->client_key,
                 'client_secret' => $this->maskClientSecret($client->client_secret),
-                'subscription_package_name' => $client->subscriptions[0]->package->package_name,
-                'auto_renewal_enabled' => $client->subscriptions[0]->is_auto_renew,
-                'quota_for_usage' => $client->subscriptions[0]?->package?->usageLimits?->toArray(),
+                'subscription_package_name' => $subscription_package_name,
+                'auto_renewal_enabled' => $auto_renewal_enabled,
+                'quota_for_usage' => $quota_for_usage,
                 'usage_tracking' => $client->usageTracking?->toArray(),
                 'status' => $client->status,
                 'created_at' => $client->created_at,
                 'updated_at' => $client->updated_at,
             ];
         }
-
         return $data;
     }
 

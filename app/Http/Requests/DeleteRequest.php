@@ -18,7 +18,7 @@ class DeleteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name"
+            // "user_name" => "required|string|exists:vw_app_users,user_name"
         ];
     }
 }

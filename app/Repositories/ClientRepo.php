@@ -62,25 +62,25 @@ class ClientRepo
             deleteCacheDataByTableName($this->model->getTable());
             $store = $this->model::on('mysql::write')->create($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
 
         } catch (\Exception $e) {
             $store = $this->model::on('mysql::write')->create($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
         }
     }
@@ -135,25 +135,25 @@ class ClientRepo
             deleteCacheDataByTableName($this->model->getTable());
             $event = $this->model::on('mysql::write')->where("id", $clientId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
 
         } catch (\Exception $e) {
             $event = $this->model::on('mysql::write')->where("id", $clientId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
         }
     }
