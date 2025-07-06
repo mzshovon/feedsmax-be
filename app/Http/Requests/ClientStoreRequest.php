@@ -17,7 +17,6 @@ class ClientStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
             "company_tag" => "required|string|unique:clients,company_tag",
             "company_name" => "required|string|max:100",
             "contact_name" => "nullable|string|max:100",

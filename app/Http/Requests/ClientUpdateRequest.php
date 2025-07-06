@@ -17,18 +17,16 @@ class ClientUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $clientId = $this->route('clientId');
-        
+        $clientId = $this->id;
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
             "company_tag" => ["required", "string", Rule::unique('clients', 'company_tag')->ignore($clientId)],
             "company_name" => "required|string|max:100",
             "contact_name" => "nullable|string|max:100",
-            "email" => ["required", "email", Rule::unique('clients', 'email')->ignore($clientId)],
+            "email" => ["nullable", "email", Rule::unique('clients', 'email')->ignore($clientId)],
             "phone" => "nullable|string|max:13",
             "address" => "nullable|string",
-            "client_key" => "required|string|max:200",
-            "client_secret" => "required|string|max:200",
+            "client_key" => "nullable|string|max:200",
+            "client_secret" => "nullable|string|max:200",
             "status" => "required|boolean",
         ];
     }

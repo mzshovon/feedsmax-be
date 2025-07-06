@@ -10,16 +10,45 @@ class ClientService implements ClientServiceInterface
 {
     public function __construct(
         private ClientRepo $clientRepo
-    ) {
-    }
+    ) {}
 
     /**
+     * Get all clients with proper column selection and formatting
+     * 
+     * @param array $selectedColumns
+     * @param int $perPage
      * @return array
      */
-    public function get(): array
+    public function get(array $selectedColumns = [], ?int $perPage = null): array
     {
-        $data = $this->clientRepo->getClients();
-        return $data;
+        // Define default columns to return
+        $defaultColumns = [
+            'id',
+            'company_tag',
+            'company_name', 
+            'contact_name',
+            'email',
+            'phone',
+            'address',
+            // 'client_key',
+            // 'client_secret',
+            'status',
+            'created_at',
+            'updated_at'
+        ];
+
+        // Use provided columns or defaults
+        $columns = !empty($selectedColumns) ? $selectedColumns : $defaultColumns;
+        
+        // Get clients with selected columns
+        $clients = $this->clientRepo->getClients('read', $columns);
+        
+        return [
+            'data' => $clients,
+            'total' => count($clients),
+            'per_page' => $perPage ?? count($clients),
+            'current_page' => 1
+        ];
     }
 
     /**
@@ -107,11 +136,11 @@ class ClientService implements ClientServiceInterface
                 'phone' => $client->phone,
                 'address' => $client->address,
                 'client_key' => $client->client_key,
+                'client_secret' => $this->maskClientSecret($client->client_secret),
                 'subscription_package_name' => $client->subscriptions[0]->package->package_name,
                 'auto_renewal_enabled' => $client->subscriptions[0]->is_auto_renew,
                 'quota_for_usage' => $client->subscriptions[0]?->package?->usageLimits?->toArray(),
                 'usage_tracking' => $client->usageTracking?->toArray(),
-                // 'client_secret' => $client->client_secret,
                 'status' => $client->status,
                 'created_at' => $client->created_at,
                 'updated_at' => $client->updated_at,
@@ -119,5 +148,26 @@ class ClientService implements ClientServiceInterface
         }
 
         return $data;
+    }
+
+    /**
+     * Mask client secret by showing half as asterisks and half as actual string
+     * 
+     * @param string|null $clientSecret
+     * @return string
+     */
+    private function maskClientSecret(?string $clientSecret): string
+    {
+        if (!$clientSecret) {
+            return '';
+        }
+
+        $length = strlen($clientSecret);
+        $halfLength = (int) ceil($length / 2);
+        
+        $visiblePart = substr($clientSecret, $halfLength,0);
+        $hiddenPart = str_repeat('*', $length - $halfLength);
+        
+        return $visiblePart . $hiddenPart;
     }
 } 

@@ -98,26 +98,24 @@ class ClientRepo
         try {
             deleteCacheDataByTableName($this->model->getTable());
             $client = $this->model::on('mysql::write')->where($param, $value)->update($request);
-
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $client;
 
         } catch (\Exception $e) {
             $client = $this->model::on('mysql::write')->where($param, $value)->update($request);
-
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $client;
         }
     }
