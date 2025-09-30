@@ -17,9 +17,10 @@ class ChannelService implements ChannelServiceInterface
     /**
      * @return array
      */
-    public function get(): array
+    public function get(?string $columns = null): array
     {
-        $data = $this->channelRepo->getChannels();
+        $columns = !empty($columns) ? explode(",", $columns) : ["*"];
+        $data = $this->channelRepo->getChannels('read', $columns);
         return $data;
     }
 
@@ -95,7 +96,7 @@ class ChannelService implements ChannelServiceInterface
                 ->setAppSecret($channel->app_secret)
                 ->setJWKS($channel->jwks)
                 ->setStatus($channel->status)
-                ->setNumOfQuestions($channel->num_of_questions)
+                ->setPagination($channel?->pagination ?? 10)
                 ->setTheme($channel->themes)
                 ->build();
         }

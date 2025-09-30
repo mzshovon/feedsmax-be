@@ -28,7 +28,11 @@ class ChannelRepo
      */
     public function getChannels($instance_type = "read", array $selected_columns = ["*"]): array
     {
-        $channel = $this->model::on('mysql::' . $instance_type)->with('themes')->select($selected_columns)->get()->toArray();
+        $channel = $this->model::on('mysql::' . $instance_type)
+                ->with('themes')
+                ->select($selected_columns)
+                ->get()
+                ->toArray();
         return $channel;
     }
 
@@ -95,28 +99,29 @@ class ChannelRepo
         $userName = $request['user_name'] ?? null;
         unset($request['user_name']);
         try {
-            deleteCacheDataByTableName($this->model->getTable());
+            //! FIX: Need to introduce REDIS/Memcache/File cache clear mechanims with new framework
+            // deleteCacheDataByTableName($this->model->getTable());
             $store = $this->model::on('mysql::write')->create($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
 
         } catch (\Exception $e) {
             $store = $this->model::on('mysql::write')->create($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
         }
     }
@@ -132,28 +137,28 @@ class ChannelRepo
         unset($request['user_name']);
         $existing = $this->model::on('mysql::read')->where($param, $value)->first();
         try {
-            deleteCacheDataByTableName($this->model->getTable());
+            // deleteCacheDataByTableName($this->model->getTable());
             $channel = $this->model::on('mysql::write')->where($param, $value)->update($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $channel;
 
         } catch (\Exception $e) {
             $channel = $this->model::on('mysql::write')->where($param, $value)->update($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $channel;
         }
     }
@@ -170,28 +175,28 @@ class ChannelRepo
         unset($request['user_name']);
         $existing = $this->model::on('mysql::read')->where("id", $channelId)->first();
         try {
-            deleteCacheDataByTableName($this->model->getTable());
+            // deleteCacheDataByTableName($this->model->getTable());
             $event = $this->model::on('mysql::write')->where("id", $channelId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
 
         } catch (\Exception $e) {
             $event = $this->model::on('mysql::write')->where("id", $channelId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
         }
     }

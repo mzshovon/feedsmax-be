@@ -73,11 +73,11 @@ class ChannelResponseEntityForCMS
     }
 
     /**
-     * @param array $num_of_questions
+     * @param int $pagination
      * @return $this
      */
-    public function setNumOfQuestions(int $num_of_questions): ChannelResponseEntityForCMS{
-        $this->data['num_of_questions'] = $num_of_questions;
+    public function setPagination(int $pagination): ChannelResponseEntityForCMS{
+        $this->data['pagination'] = $pagination;
         return $this;
     }
 

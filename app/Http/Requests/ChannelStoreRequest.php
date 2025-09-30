@@ -17,7 +17,7 @@ class ChannelStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
+            // "user_name" => "required|string|exists:vw_app_users,user_name",
             "tag" => "required|string|unique:channels,tag",
             "name" => "required|string|unique:channels,name",
             "app_key" => "required|string",
@@ -25,7 +25,8 @@ class ChannelStoreRequest extends FormRequest
             "jwks" => "nullable|string",
             "status" => "required|integer",
             "num_of_questions" => "nullable|integer",
-            "theme" => "required|integer|exists:themes,id",
+            "theme_id" => "required|integer|exists:themes,id",
+            "client_id" => "required|integer|exists:clients,id",
         ];
     }
 }

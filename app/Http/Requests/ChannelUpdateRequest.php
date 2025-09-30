@@ -17,7 +17,7 @@ class ChannelUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
+            // "user_name" => "required|string|exists:vw_app_users,user_name",
             "tag" => "nullable|string|unique:channels,tag,".$this->id,
             "name" => "nullable|string|unique:channels,name,".$this->id,
             "app_key" => "nullable|string",

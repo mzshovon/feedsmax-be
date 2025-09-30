@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('updated_by')->unsigned()->nullable();
             $table->foreignId('client_id')->constrained('clients');
             $table->foreignId('theme_id')->constrained('themes');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -29,7 +29,8 @@ class ChannelController extends Controller
     public function index()
     {
         try {
-            $data = $this->repo->get();
+            $columns = request()->get("columns") ?? null;
+            $data = $this->repo->get($columns);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getTrace(), 500);
