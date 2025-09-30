@@ -23,7 +23,7 @@ class ThemeUpdateRequest extends FormRequest
                 "integer",
                 new RestrictDefaultThemeUpdateOrDeleteRule
             ],
-            "user_name" => "required|string|exists:vw_app_users,user_name",
+            // "user_name" => "required|string|exists:vw_app_users,user_name",
             "name" => "nullable|string|max:100|unique:themes,name,".$this->id.",id",
             "value" => "nullable|array"
         ];

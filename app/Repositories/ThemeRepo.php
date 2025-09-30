@@ -44,14 +44,24 @@ class ThemeRepo
      *
      * @return Model
      */
-    public function getThemeByColumn(string $columnName = "id", $columnValue = "", $instance_type = "read", array $selected_columns = ["*"]): Model|null
+    public function getThemeByColumn(
+        string $columnName = "id", 
+        $columnValue = "", 
+        $instance_type = "read", 
+        array $selected_columns = ["*"]
+        ): Model|null
     {
-        $theme = $this->model::on('mysql::' . $instance_type)
+        try {
+            $theme = $this->model::on('mysql::' . $instance_type)
             ->with("channels")
             ->select($selected_columns)
             ->where($columnName, $columnValue)
             ->first();
-        return $theme;
+            return $theme;
+        } catch (\Exception $ex) {
+            throw new \Exception($ex->getMessage());
+        }
+
     }
 
     /**
@@ -64,29 +74,29 @@ class ThemeRepo
         $userName = $request['user_name'] ?? null;
         unset($request['user_name']);
         try {
-            deleteCacheDataByTableName("channels");
-            deleteCacheDataByTableName("questionnaires");
+            // deleteCacheDataByTableName("channels");
+            // deleteCacheDataByTableName("questionnaires");
             $store = $this->model::on('mysql::write')->create($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
 
         } catch (\Exception $e) {
             $store = $this->model::on('mysql::write')->create($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
         }
     }
@@ -102,28 +112,28 @@ class ThemeRepo
         unset($request['user_name']);
         $existing = $this->model::on('mysql::read')->where($param, $value)->first();
         try {
-            deleteCacheDataByTableName("channels");
-            deleteCacheDataByTableName("questionnaires");
+            // deleteCacheDataByTableName("channels");
+            // deleteCacheDataByTableName("questionnaires");
             $theme = $this->model::on('mysql::write')->where($param, $value)->update($request);
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $theme;
 
         } catch (\Exception $e) {
             $theme = $this->model::on('mysql::write')->where($param, $value)->update($request);
 
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $theme;
         }
     }
@@ -140,29 +150,29 @@ class ThemeRepo
         unset($request['user_name']);
         $existing = $this->model::on('mysql::read')->where("id", $themeId)->first();
         try {
-            deleteCacheDataByTableName("channels");
-            deleteCacheDataByTableName("questionnaires");
+            // deleteCacheDataByTableName("channels");
+            // deleteCacheDataByTableName("questionnaires");
             $event = $this->model::on('mysql::write')->where("id", $themeId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
 
         } catch (\Exception $e) {
             $event = $this->model::on('mysql::write')->where("id", $themeId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
         }
     }

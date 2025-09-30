@@ -29,11 +29,12 @@ class ThemeController extends Controller
     public function index(Request $request)
     {
         try {
-            $columnName = $request->get("name") ?? null;
-            $data = $this->repo->get($columnName);
+            $search = $request->get("search") ?? null;
+            $columns = $request->get("columns") ?? null;
+            $data = $this->repo->get($search, $columns);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getTrace(), 500);
+        } catch (\Exception $ex) {
+            return $this->error($ex->getMessage(), $ex->getTrace(), $ex->getCode());
         }
     }
 
@@ -45,8 +46,8 @@ class ThemeController extends Controller
         try {
             $data = $this->repo->store($request->all());
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getTrace(), 500);
+        } catch (\Exception $ex) {
+            return $this->error($ex->getMessage(), $ex->getTrace(), $ex->getCode());
         }
     }
 
@@ -58,8 +59,8 @@ class ThemeController extends Controller
         try {
             $data = $this->repo->getThemeById($id);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getTrace(), 500);
+        } catch (\Exception $ex) {
+            return $this->error($ex->getMessage(), $ex->getTrace(), $ex->getCode());
         }
     }
 
@@ -71,8 +72,8 @@ class ThemeController extends Controller
         try {
             $data = $this->repo->update($request->all(), $id);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getTrace(), 500);
+        } catch (\Exception $ex) {
+            return $this->error($ex->getMessage(), $ex->getTrace(), $ex->getCode());
         }
     }
 
@@ -84,8 +85,8 @@ class ThemeController extends Controller
         try {
             $data = $this->repo->delete($id, $request->all());
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getTrace(), 500);
+        } catch (\Exception $ex) {
+            return $this->error($ex->getMessage(), $ex->getTrace(), $ex->getCode());
         }
     }
 }

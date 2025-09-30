@@ -17,7 +17,7 @@ class ThemeStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
+            // "user_name" => "required|string|exists:vw_app_users,user_name",
             "name" => "required|string|max:100|not_in:default|unique:themes,name",
             "value" => "required|array",
         ];

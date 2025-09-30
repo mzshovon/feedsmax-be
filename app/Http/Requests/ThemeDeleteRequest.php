@@ -22,7 +22,7 @@ class ThemeDeleteRequest extends FormRequest
                 "integer",
                 new RestrictDefaultThemeUpdateOrDeleteRule
             ],
-            "user_name" => "required|string|exists:vw_app_users,user_name",
+            // "user_name" => "required|string|exists:vw_app_users,user_name",
         ];
     }
 

@@ -18,6 +18,6 @@ class Theme extends Model
 
     public function channels()
     {
-        return $this->hasMany(Channel::class, "theme", "id");
+        return $this->hasMany(Channel::class, "theme_id", "id");
     }
 }

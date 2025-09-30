@@ -17,14 +17,17 @@ class ThemeService implements ThemeServiceInterface
     ){}
 
 	/**
-	 * @param string|null $columnName
+	 * @param string|null $columns
+	 * @param string|null $search
 	 *
 	 * @return array
 	 */
-	public function get(string|null $columnName) : array
+	public function get(string|null $search, string|null $columns) : array
     {
-        if($columnName) {
-            $data = $this->response($this->themeRepo->getThemeByColumn("name", $columnName));
+        if($search) {
+            $data = $this->response($this->themeRepo->getThemeByColumn("name", $search));
+        } if($columns) {
+            $data = $this->themeRepo->getThemes("read", explode(",", $columns));
         } else {
             $data = $this->themeRepo->getThemes();
         }
@@ -119,7 +122,12 @@ class ThemeService implements ThemeServiceInterface
                 ->build();
         }
 
-        return $data;
+        switch (!empty($data)) {
+            case true:
+                return $data;
+            default:
+                throw new \Exception("Theme not found", 404);
+        }
     }
 
     /**

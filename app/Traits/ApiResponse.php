@@ -49,7 +49,7 @@ trait ApiResponse
             'statusCode' => $code,
             'message' => $message,
             'data' => $data,
-        ] + (in_array(strtolower(config('app.env')), ['test', 'local']) ?
+        ] + (in_array(strtolower(config('app.env')), ['test']) ?
                 ['trace' => $trace] : []
             ), $code);
     }
