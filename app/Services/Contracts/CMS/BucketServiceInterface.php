@@ -5,7 +5,7 @@ namespace App\Services\Contracts\CMS;
 interface BucketServiceInterface
 {
     // Your repository interface code here
-	public function get();
+	public function get(?string $columns = null);
 
 	public function getBucketById(int $id);
 

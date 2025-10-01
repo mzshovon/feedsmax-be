@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-class GroupResponseEntity
+class BucketResponseEntity
 {
     /**
      * @var array
@@ -18,7 +18,7 @@ class GroupResponseEntity
      * @param string $name
      * @return $this
      */
-    public function setName(string $name): GroupResponseEntity{
+    public function setName(string $name): BucketResponseEntity{
         $this->data['name'] = $name;
         return $this;
     }
@@ -28,7 +28,7 @@ class GroupResponseEntity
      *
      * @return $this
      */
-    public function setDescription(string|null $description): GroupResponseEntity{
+    public function setDescription(string|null $description): BucketResponseEntity{
         $this->data['description'] = $description;
         return $this;
     }
@@ -38,18 +38,28 @@ class GroupResponseEntity
      *
      * @return $this
      */
-    public function setStatus(int $status): GroupResponseEntity{
+    public function setStatus(int $status): BucketResponseEntity{
         $this->data['status'] = $status;
         return $this;
     }
 
     /**
-     * @param string $type
+     * @param string $quota
      *
      * @return $this
      */
-    public function setType(string|null $type): GroupResponseEntity{
-        $this->data['type'] = $type;
+    public function setQuota(int|null $quota): BucketResponseEntity{
+        $this->data['quota'] = $quota;
+        return $this;
+    }
+
+    /**
+     * @param string $served
+     *
+     * @return $this
+     */
+    public function setServed(int|null $served): BucketResponseEntity{
+        $this->data['served'] = $served;
         return $this;
     }
 
@@ -58,7 +68,7 @@ class GroupResponseEntity
      *
      * @return $this
      */
-    public function npsQuestionId(int|null $nps_ques_id): GroupResponseEntity{
+    public function npsQuestionId(int|null $nps_ques_id): BucketResponseEntity{
         $this->data['nps_ques_id'] = $nps_ques_id;
         return $this;
     }
@@ -68,7 +78,7 @@ class GroupResponseEntity
      *
      * @return $this
      */
-    public function promoterRange(int|null $promoter_range): GroupResponseEntity{
+    public function promoterRange(int|null $promoter_range): BucketResponseEntity{
         $this->data['promoter_range'] = $promoter_range;
         return $this;
     }

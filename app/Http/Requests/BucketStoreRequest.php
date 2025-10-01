@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Traits\FormValidationResponse;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GroupUpdateRequest extends FormRequest
+class BucketStoreRequest extends FormRequest
 {
     use FormValidationResponse;
 
@@ -17,12 +17,12 @@ class GroupUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
-            "name" => "nullable|string|unique:groups,name,".$this->id,
+            // "user_name" => "required|string|exists:vw_app_users,user_name",
+            "name" => "required|string|unique:buckets,name",
             "status" => "integer|in:0,1",
-            "type" => "nullable|string|in:nps,NPS,csat,CSAT,ces,CES",
-            "nps_ques_id" => "required|integer|exists:questionnaires,id",
-            "promoter_range" => "required|string|min:1|max:10"
+            // "type" => "nullable|string|in:nps,NPS,csat,CSAT,ces,CES",
+            // "nps_ques_id" => "required|integer|exists:questionnaires,id",
+            // "promoter_range" => "required|string|min:1|max:10"
         ];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Services\CMS;
 
-use App\Entity\GroupResponseEntity;
-use App\Repositories\GroupRepo;
+use App\Entity\BucketResponseEntity;
+use App\Repositories\BucketRepo;
 use App\Repositories\QuestionRepo;
 use App\Services\Contracts\CMS\BucketServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -12,22 +12,25 @@ class BucketService implements BucketServiceInterface
 {
     // Your service class code here
 	public function __construct(
-        private readonly GroupRepo $groupRepo,
+        private readonly BucketRepo $bucketRepo,
         private readonly QuestionRepo $questionRepo
     ){}
 
 	/**
+	 * @param string|null $columns
+	 * 
 	 * @return array
 	 */
-	public function get(): array
+	public function get(?string $columns = null): array
     {
-        $data = $this->groupRepo->getGroups();
+        $columns = !empty($columns) ? explode(",", $columns) : ["*"];
+        $data = $this->bucketRepo->getBuckets("read", $columns);
         return $data;
     }
 
 	public function getBucketById(int $id)
     {
-        $data = $this->response($this->groupRepo->getBucketById($id));
+        $data = $this->response($this->bucketRepo->getBucketById($id));
         return $data;
     }
 
@@ -38,7 +41,7 @@ class BucketService implements BucketServiceInterface
 	 */
 	public function store(array $request) : bool
     {
-        $storeData = $this->groupRepo->storeGroup($request);
+        $storeData = $this->bucketRepo->storeBucket($request);
         if ($storeData) {
             return true;
         }
@@ -55,7 +58,7 @@ class BucketService implements BucketServiceInterface
     {
         $fillableData = $this->fillableData($request);
 
-        $updateData = $this->groupRepo->updateGroupById("id", $id, $fillableData);
+        $updateData = $this->bucketRepo->updateBucketById("id", $id, $fillableData);
         if ($updateData) {
             return true;
         }
@@ -69,7 +72,7 @@ class BucketService implements BucketServiceInterface
      */
     private function fillableData(array $request): array{
         $data = [];
-        $fillable = ['user_name', 'id', 'name', 'description', 'status', 'type', 'nps_ques_id', 'promoter_range'];
+        $fillable = ['user_name', 'id', 'name', 'description', 'status', 'quota', 'served'];
         foreach($request as $key => $value){
             if(in_array($key, $fillable)){
                 $data[$key] = $value;
@@ -86,7 +89,7 @@ class BucketService implements BucketServiceInterface
 	 */
 	public function delete(int $id, array $request) : bool
     {
-        return $this->groupRepo->deleteGroupById($id, $request);
+        return $this->bucketRepo->deleteBucketById($id, $request);
     }
 
     /**
@@ -96,7 +99,7 @@ class BucketService implements BucketServiceInterface
      */
     public function getQuestionsByBucketId(int $id): array
     {
-        return $this->questionRepo->getQuestionListForCMSByGroupId($id);
+        return $this->questionRepo->getQuestionListForCMSByBucketId($id);
     }
 
     /**
@@ -106,7 +109,7 @@ class BucketService implements BucketServiceInterface
      */
     public function attachQuestions(array $request): bool
     {
-        $syncChanges = $this->groupRepo->attachQuestions($request['group_id'], $request['questions'], $request['user_name'], "write");
+        $syncChanges = $this->bucketRepo->attachQuestions($request['bucket_id'], $request['questions'], $request['user_name'], "write");
         if(!empty($syncChanges)) {
             return true;
         }
@@ -114,21 +117,22 @@ class BucketService implements BucketServiceInterface
     }
 
     /**
-     * @param Model|null $group
+     * @param Model|null $bucket
      *
      * @return array
      */
-    private function response(Model|null $group): array
+    private function response(Model|null $bucket): array
     {
         $data = [];
-        if ($group) {
-            $data = (new GroupResponseEntity())
-                ->setName($group->name)
-                ->setDescription($group->description)
-                ->setStatus($group->status)
-                ->setType($group->type ?? null)
-                ->npsQuestionId($group->nps_ques_id ?? null)
-                ->promoterRange($group->promoter_range ?? null)
+        if ($bucket) {
+            $data = (new BucketResponseEntity())
+                ->setName($bucket->name)
+                ->setDescription($bucket->description)
+                ->setStatus($bucket->status)
+                ->setQuota($bucket->quota ?? null)
+                ->setServed($bucket->served ?? null)
+                // ->npsQuestionId($bucket->nps_ques_id ?? null)
+                // ->promoterRange($bucket->promoter_range ?? null)
                 ->build();
         }
 

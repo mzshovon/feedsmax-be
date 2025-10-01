@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\CMS;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeleteRequest;
-use App\Http\Requests\GroupStoreRequest;
-use App\Http\Requests\GroupUpdateRequest;
-use App\Http\Requests\QuestionsAttachToGroupRequest;
+use App\Http\Requests\BucketStoreRequest;
+use App\Http\Requests\BucketUpdateRequest;
+use App\Http\Requests\QuestionsAttachToBucketRequest;
 use App\Services\Contracts\CMS\BucketServiceInterface;
 use App\Traits\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +38,7 @@ class BucketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(GroupStoreRequest $request)
+    public function store(BucketStoreRequest $request)
     {
         try {
             $data = $this->repo->store($request->all());
@@ -64,7 +64,7 @@ class BucketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(GroupUpdateRequest $request, string $id)
+    public function update(BucketUpdateRequest $request, string $id)
     {
         try {
             $data = $this->repo->update($request->all(), $id);
@@ -97,7 +97,7 @@ class BucketController extends Controller
         }
     }
 
-    public function attachQuestionsToBucket(QuestionsAttachToGroupRequest $request)
+    public function attachQuestionsToBucket(QuestionsAttachToBucketRequest $request)
     {
         try {
             $data = $this->repo->attachQuestions($request->all());

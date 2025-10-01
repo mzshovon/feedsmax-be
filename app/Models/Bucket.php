@@ -13,8 +13,8 @@ class Bucket extends Model
         "name",
         "description",
         "status",
-        "type",
-        "promoter_range"
+        "quota",
+        "served"
     ];
 
     public function questions()
