@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Enums\ChoiceType;
 use App\Models\Status;
 use App\Repositories\StriveRepo;
-use App\Repositories\GroupRepo;
+use App\Repositories\BucketRepo;
 use App\Repositories\ResponseRepo;
 
 class ResponseService
@@ -15,7 +15,7 @@ class ResponseService
     public function __construct(
         private ResponseRepo $repo,
         private StriveRepo $StriveRepo,
-        private GroupRepo $groupRepo,
+        private BucketRepo $groupRepo,
     ) {
     }
 

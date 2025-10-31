@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Entity\QuestionResponseEntity;
-use App\Repositories\GroupRepo;
-use App\Repositories\QuestionRepo;
+use App\Repositories\{BucketRepo, QuestionRepo};
 use App\Services\Contracts\QuestionServiceInterface;
 use Exception;
 
@@ -18,7 +17,7 @@ class QuestionService implements QuestionServiceInterface
         private readonly QuestionRepo $questionRepo,
         private readonly AttemptService $attemptService,
         private readonly ResponseService $responseService,
-        private readonly GroupRepo $groupRepo,
+        private readonly BucketRepo $bucketRepo,
     ) {}
 
     /**
@@ -29,7 +28,12 @@ class QuestionService implements QuestionServiceInterface
      * 
      * @return array
      */
-    public function questionList(int $striveId, string $channel, string $referenceId, string $url): array
+    public function questionList(
+        int $striveId, 
+        string $channel, 
+        string $referenceId, 
+        string $url
+    ): array
     {
         try {
             $questionList = [];
@@ -47,13 +51,11 @@ class QuestionService implements QuestionServiceInterface
                 $questions,
                 $language
             ] = $this->attemptService->getEventInfoFromId($striveId);
-
             if(($channelName === $channel) && ($eventName === $event) ) {
                 if ($eventId && $striveId && !empty($questions)) {
                     [$questionList, $scoreRangeField] = $this->scoreAndQuestionDivider($questions, $bucketId);
                 }
             }
-
             return $this->response(
                 $eventId,
                 $striveId,
