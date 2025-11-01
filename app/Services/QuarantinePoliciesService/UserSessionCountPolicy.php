@@ -6,7 +6,7 @@ use App\Services\Contracts\RuleEngineInterface;
 use App\Services\StrategyService\QuotaChecker;
 use App\Services\StrategyService\SessionQuotaCheckStrategy;
 
-class SurveySessionQuota implements RuleEngineInterface
+class UserSessionCountPolicy implements RuleEngineInterface
 {
     private $quotaChecker;
 

@@ -4,10 +4,10 @@ namespace App\Services\RuleService;
 
 use App\Services\Contracts\RuleEngineInterface;
 
-class VolunteerSurveyDay implements RuleEngineInterface
+class RandomRulePolicy implements RuleEngineInterface
 {
     public function match(array $request, ...$args): bool
     {
-        return true;
+        return array_rand([true, false]);
     }
 }

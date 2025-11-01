@@ -19,7 +19,6 @@ return new class extends Migration
             $table->json('args')->nullable();
             $table->json('update_params')->nullable();
             $table->longText('definition')->nullable();
-            $table->foreignId('event_id')->constrained("events");
             $table->boolean('status');
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();

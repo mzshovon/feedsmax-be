@@ -7,7 +7,7 @@ use App\Repositories\StriveRepo;
 use App\Services\Contracts\RuleEngineInterface;
 use Carbon\Carbon;
 
-class SurveyRejectChannelDay implements RuleEngineInterface
+class FeedbackRejectDayPolicy implements RuleEngineInterface
 {
     private StriveRepo $StriveRepo;
 
