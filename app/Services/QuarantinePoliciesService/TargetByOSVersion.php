@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\RuleService;
+namespace App\Services\PolicyService;
 
 use App\Enums\Comparator;
 use App\Services\Contracts\RuleEngineInterface;

@@ -6,7 +6,7 @@ use App\Traits\FormValidationResponse;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RuleUpdateRequest extends FormRequest
+class PolicyUpdateRequest extends FormRequest
 {
     use FormValidationResponse;
 
@@ -18,15 +18,16 @@ class RuleUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
-            "id" => "required|integer|exists:rules,id",
-            "func" => [
+            "id" => "required|integer|exists:quarantine_policies,id",
+            "name" => "nullable|string",
+            "call_object_notation" => [
                 "nullable",
                 "string",
-                Rule::unique("rules", "func")->where(function($q){
-                    return $q->whereNot('trigger_id', 0)->whereNot('id', $this->id);
-                })
+                "unique:quarantine_policies,call_object_notation"
             ],
+            "args" => "nullable|array",
+            "definition" => "nullable|string",
+            "status" => "nullable|integer|in:0,1",
             "args" => "nullable|array",
             "definition" => "nullable|string",
             "enabled" => "nullable|integer|in:0,1",

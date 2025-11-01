@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use App\Enums\Comparator;
-use App\Services\RuleService\TargetByAppVersion;
-use App\Services\RuleService\TargetByOSVersion;
+use App\Services\PolicyService\TargetByAppVersion;
+use App\Services\PolicyService\TargetByOSVersion;
 use PHPUnit\Framework\TestCase;
 
 class RuleOSVersionTest extends TestCase

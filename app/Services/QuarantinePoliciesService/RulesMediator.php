@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\RuleService;
+namespace App\Services\PolicyService;
 
 use App\Models\Rule;
-use App\Repositories\RulesRepo;
+use App\Repositories\PolicyRepo;
 use App\Services\Contracts\RuleEngineInterface;
-use App\Services\RuleService\SurveySessionCustomer;
+use App\Services\PolicyService\SurveySessionCustomer;
 use Exception;
 use Reflection;
 use ReflectionClass;
@@ -17,13 +17,13 @@ class RulesMediator
 {
     private int $trigger_id;
 
-    private RulesRepo $rulesRepo;
+    private PolicyRepo $PolicyRepo;
 
     public function __construct(
         int $trigger_id
     ) {
         $this->trigger_id = $trigger_id;
-        $this->rulesRepo = new RulesRepo(new Rule());
+        $this->PolicyRepo = new PolicyRepo(new Rule());
     }
 
     /**
@@ -35,7 +35,7 @@ class RulesMediator
         $request['trigger_id'] = $trigger_id;
         $request['channel_id'] = $channel_id;
         try {
-            $rules = $this->rulesRepo->rules($trigger_id, 'read');
+            $rules = $this->PolicyRepo->rules($trigger_id, 'read');
 
             if(count($rules) > 0){
                 foreach ($rules as $key => $rule) {
@@ -70,7 +70,7 @@ class RulesMediator
             $addSpace = str_replace('_', ' ', $rule);
             $upperCase = ucwords($addSpace);
             $className = str_replace(' ', '', $upperCase);
-            $callingClass = '\\App\\Services\\RuleService\\' . $className;
+            $callingClass = '\\App\\Services\\PolicyService\\' . $className;
             return [new ReflectionMethod($callingClass, 'match'), $callingClass];
         } catch (ReflectionException $ex) {
             throw new Exception($ex->getMessage());

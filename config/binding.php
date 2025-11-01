@@ -6,7 +6,7 @@ return [
         App\Services\Contracts\CMS\EventServiceInterface::class => App\Services\CMS\EventService::class,
         App\Services\Contracts\CMS\ChannelServiceInterface::class => App\Services\CMS\ChannelService::class,
         App\Services\Contracts\CMS\QuestionServiceInterface::class => App\Services\CMS\QuestionService::class,
-        App\Services\Contracts\CMS\RuleServiceInterface::class => App\Services\CMS\RuleService::class,
+        App\Services\Contracts\CMS\PolicyServiceInterface::class => App\Services\CMS\PolicyService::class,
         App\Services\Contracts\CMS\CategorySubCategoryServiceInterface::class => App\Services\CMS\CategorySubCategoryService::class,
         App\Services\Contracts\CMS\SentimentMapperServiceInterface::class => App\Services\CMS\SentimentMapperService::class,
         App\Services\Contracts\CMS\StatusServiceInterface::class => App\Services\CMS\StatusService::class,

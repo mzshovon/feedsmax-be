@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\RuleService;
+namespace App\Services\PolicyService;
 
 use App\Models\Strive;
 use App\Repositories\StriveRepo;

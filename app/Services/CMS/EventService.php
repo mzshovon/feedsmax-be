@@ -3,7 +3,7 @@
 namespace App\Services\CMS;
 
 use App\Entity\EventResponseEntityForCMS;
-use App\Repositories\{QuestionRepo, RulesRepo, EventRepo};
+use App\Repositories\{QuestionRepo, PolicyRepo, EventRepo};
 use App\Services\Contracts\CMS\EventServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ class EventService implements EventServiceInterface
     public function __construct(
         private EventRepo $eventRepo,
         private readonly QuestionRepo $questionRepo,
-        private readonly RulesRepo $rulesRepo
+        private readonly PolicyRepo $PolicyRepo
     ) {
     }
 
@@ -113,7 +113,7 @@ class EventService implements EventServiceInterface
      */
     public function getRulesByEventId(int $eventId): array
     {
-        $data = $this->rulesRepo->rulesForCMS($eventId);
+        $data = $this->PolicyRepo->rulesForCMS($eventId);
         return $data;
     }
 
@@ -135,7 +135,7 @@ class EventService implements EventServiceInterface
      */
     public function attachRule(array $request): bool
     {
-        $checkTaggedRuleExistForEvent = $this->rulesRepo->singleRuleFetchByGivenParam(
+        $checkTaggedRuleExistForEvent = $this->PolicyRepo->singleRuleFetchByGivenParam(
             [
                 "event_id" => $request['event_id'],
                 "func" => $request['rule'],
@@ -147,11 +147,11 @@ class EventService implements EventServiceInterface
             } else {
                 $rule['args'] = $checkTaggedRuleExistForEvent['args'];
             }
-            return $this->rulesRepo->updateRuleById("id", $checkTaggedRuleExistForEvent->id,
+            return $this->PolicyRepo->updateRuleById("id", $checkTaggedRuleExistForEvent->id,
             ["args" => $rule['args'], "user_name" => $request['user_name'], "enabled" => 1]
         );
         }
-        $fetchSelectionRule = $this->rulesRepo->ruleGetByFuncNameForAttach($request['rule']);
+        $fetchSelectionRule = $this->PolicyRepo->ruleGetByFuncNameForAttach($request['rule']);
         if(!empty($fetchSelectionRule)){
             $rule = $fetchSelectionRule[0];
             $rule['event_id'] = $request['event_id'];
@@ -159,7 +159,7 @@ class EventService implements EventServiceInterface
             $rule['enabled'] = 1;
             $rule['args'] = !isset($request['args']) ? $rule['args'] : json_encode($request['args']);
 
-            $attachRule = $this->rulesRepo->storeRule($rule);
+            $attachRule = $this->PolicyRepo->storeRule($rule);
             if($attachRule){
                 return true;
             }

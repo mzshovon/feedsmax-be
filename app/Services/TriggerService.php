@@ -9,7 +9,7 @@ use App\Repositories\HitRepo;
 use App\Repositories\RedirectionRepo;
 use App\Repositories\EventRepo;
 use App\Services\Contracts\TriggerServiceInterface;
-use App\Services\RuleService\RulesMediator;
+use App\Services\PolicyService\RulesMediator;
 use App\Services\StrategyService\LocationQuotaCheckStrategy;
 use App\Services\StrategyService\QuotaChecker;
 use App\Services\StrategyService\SessionQuotaCheckStrategy;
