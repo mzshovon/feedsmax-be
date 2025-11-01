@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Models\Trigger;
+use App\Models\Event;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -21,7 +21,7 @@ class UniqueEventNameForChannelRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if(Trigger::whereEvent($this->eventName)->whereChannelId($value)->exists()){
+        if(Event::whereName($this->eventName)->whereChannelId($value)->exists()){
             $fail("Already event name {$this->eventName} is tagged with same channel");
         }
     }

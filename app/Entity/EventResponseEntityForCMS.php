@@ -37,12 +37,12 @@ class EventResponseEntityForCMS
     }
 
     /**
-     * @param int $group_id
+     * @param int $bucket_id
      * @return $this
      */
-    public function setGroupId(int $group_id): EventResponseEntityForCMS
+    public function setBucketId(int $bucket_id): EventResponseEntityForCMS
     {
-        $this->data['group_id'] = $group_id;
+        $this->data['bucket_id'] = $bucket_id;
         return $this;
     }
 

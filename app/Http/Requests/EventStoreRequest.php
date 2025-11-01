@@ -18,13 +18,13 @@ class EventStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
             "type" => "required|string",
-            "event" => "required|string",
-            "context" => "required|string|in:transactional,non-transactional",
+            "name" => "required|string",
+            "context" => "required|string|in:visitor,subscriber,rate",
             "description" => "nullable|string",
-            "channel_id" => ["required", "integer", new UniqueEventNameForChannelRule($this->event)],
-            "group_id" => "required|integer|exists:groups,id",
+            "channel_id" => ["required", "integer", new UniqueEventNameForChannelRule($this->name)],
+            "bucket_id" => "required|integer|exists:buckets,id",
+            "client_id" => "required|integer|exists:clients,id",
         ];
     }
 }

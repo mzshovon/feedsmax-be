@@ -107,28 +107,28 @@ class EventRepo
      */
     public function storeEvent(array $request): Model
     {
-        $userName = $request['user_name'] ?? null;
-        unset($request['user_name']);
+        // $userName = $request['user_name'] ?? null;
+        // unset($request['user_name']);
         try {
             deleteCacheDataByTableName($this->model->getTable());
             $store = $this->model::on('mysql::write')->create($request);
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
         } catch (\Exception $e) {
             $store = $this->model::on('mysql::write')->create($request);
-            event(new PopulateChangeLog(
-                CrudEnum::Create->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                null,
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Create->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     null,
+            //     json_encode($request)
+            // ));
             return $store;
         }
     }
@@ -140,29 +140,29 @@ class EventRepo
      */
     public function updateEventById(string $param, string $value, array $request): bool
     {
-        $userName = $request['user_name'] ?? null;
-        unset($request['user_name']);
-        $existing = $this->model::on('mysql::read')->where($param, $value)->first();
+        // $userName = $request['user_name'] ?? null;
+        // unset($request['user_name']);
+        // $existing = $this->model::on('mysql::read')->where($param, $value)->first();
         try {
             deleteCacheDataByTableName($this->model->getTable());
             $event = $this->model::on('mysql::write')->where($param, $value)->update($request);
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $event;
         } catch (\Exception $e) {
             $event = $this->model::on('mysql::write')->where($param, $value)->update($request);
-            event(new PopulateChangeLog(
-                CrudEnum::Update->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                json_encode($request)
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Update->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     json_encode($request)
+            // ));
             return $event;
         }
     }
@@ -175,31 +175,31 @@ class EventRepo
      */
     public function deleteEventById(int $eventId, array $request): bool
     {
-        $userName = $request['user_name'] ?? null;
-        unset($request['user_name']);
-        $existing = $this->model::on('mysql::read')->where("id", $eventId)->first();
+        // $userName = $request['user_name'] ?? null;
+        // unset($request['user_name']);
+        // $existing = $this->model::on('mysql::read')->where("id", $eventId)->first();
         try {
             deleteCacheDataByTableName($this->model->getTable());
             $event = $this->model::on('mysql::write')->where("id", $eventId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
         } catch (\Exception $e) {
             $event = $this->model::on('mysql::write')->where("id", $eventId)->delete();
 
-            event(new PopulateChangeLog(
-                CrudEnum::Delete->value. "_" .self::IDENTIFIER,
-                $this->model->getTable(),
-                $userName,
-                json_encode($existing->attributesToArray()),
-                null
-            ));
+            // event(new PopulateChangeLog(
+            //     CrudEnum::Delete->value. "_" .self::IDENTIFIER,
+            //     $this->model->getTable(),
+            //     $userName,
+            //     json_encode($existing->attributesToArray()),
+            //     null
+            // ));
             return $event;
         }
     }

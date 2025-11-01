@@ -3,10 +3,7 @@
 namespace App\Services\CMS;
 
 use App\Entity\EventResponseEntityForCMS;
-use App\Models\TriggerQuestionnaire;
-use App\Repositories\QuestionRepo;
-use App\Repositories\RulesRepo;
-use App\Repositories\EventRepo;
+use App\Repositories\{QuestionRepo, RulesRepo, EventRepo};
 use App\Services\Contracts\CMS\EventServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -78,7 +75,7 @@ class EventService implements EventServiceInterface
      */
     private function fillableData(array $request): array{
         $data = [];
-        $fillable = ['user_name', 'id', 'group_id', 'status'];
+        $fillable = ['name', 'id', 'bucket_id', 'channel_id', 'client_id', 'status'];
         foreach($request as $key => $value){
             if(in_array($key, $fillable)){
                 $data[$key] = $value;
@@ -128,7 +125,7 @@ class EventService implements EventServiceInterface
     public function getQuestionsByEventId(int $eventId): array
     {
         $event = $this->eventRepo->getEventById($eventId);
-        return $event ? $this->questionRepo->getQuestionListForCMSByGroupId($event->group_id) : [];
+        return $event ? $this->questionRepo->getQuestionListForCMSByBucketId($event->bucket_id) : [];
     }
 
     /**
@@ -140,7 +137,7 @@ class EventService implements EventServiceInterface
     {
         $checkTaggedRuleExistForEvent = $this->rulesRepo->singleRuleFetchByGivenParam(
             [
-                "trigger_id" => $request['trigger_id'],
+                "event_id" => $request['event_id'],
                 "func" => $request['rule'],
             ]);
 
@@ -157,7 +154,7 @@ class EventService implements EventServiceInterface
         $fetchSelectionRule = $this->rulesRepo->ruleGetByFuncNameForAttach($request['rule']);
         if(!empty($fetchSelectionRule)){
             $rule = $fetchSelectionRule[0];
-            $rule['trigger_id'] = $request['trigger_id'];
+            $rule['event_id'] = $request['event_id'];
             $rule['user_name'] = $request['user_name'];
             $rule['enabled'] = 1;
             $rule['args'] = !isset($request['args']) ? $rule['args'] : json_encode($request['args']);
@@ -181,8 +178,8 @@ class EventService implements EventServiceInterface
         if ($event) {
             $data = (new EventResponseEntityForCMS())
                 ->setEventType($event->type)
-                ->setEventName($event->event)
-                ->setGroupId($event->group_id)
+                ->setEventName($event->name)
+                ->setBucketId($event->bucket_id)
                 ->setContext($event->context)
                 ->setStatus($event->status)
                 ->setDescription($event->description)

@@ -2,7 +2,7 @@
 
 namespace App\Services\RuleService;
 
-use App\Models\Attempt;
+use App\Models\Strive;
 use App\Repositories\StriveRepo;
 use App\Services\Contracts\RuleEngineInterface;
 use Carbon\Carbon;
@@ -13,7 +13,7 @@ class SurveyAcceptChannelDay implements RuleEngineInterface
 
     public function __construct()
     {
-        $this->StriveRepo = new StriveRepo(new Attempt());
+        $this->StriveRepo = new StriveRepo(new Strive());
     }
 
     /**
@@ -47,7 +47,7 @@ class SurveyAcceptChannelDay implements RuleEngineInterface
     private function dayFromLastSubmittedAttemptResponseToToday(string $msisdn, string $channel, int $trigger_id): int|null
     {
         $dayFromLastAcceptedAttemptToToday = null;
-        $lastAcceptedAttempt = $this->StriveRepo->getLastAttempt($msisdn, $channel, $trigger_id);
+        $lastAcceptedAttempt = $this->StriveRepo->getLastStrive($msisdn, $channel, $trigger_id);
         if ($lastAcceptedAttempt && $lastAcceptedAttempt->submitted_at) {
             $dayFromLastAcceptedAttemptToToday = now()->diffInDays(Carbon::parse($lastAcceptedAttempt->attempt_date));
         }

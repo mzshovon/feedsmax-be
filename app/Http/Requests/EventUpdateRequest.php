@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\UniqueEventNameForChannelRule;
 use App\Traits\FormValidationResponse;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,12 +18,17 @@ class EventUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
             "type" => "nullable|string",
-            "context" => "nullable|string|in:transactional,non-transactional",
+            "context" => "nullable|string|in:visitor,subscriber,rate",
             "description" => "nullable|string",
-            "channel_id" => "nullable|integer",
-            "group_id" => "nullable|integer",
+            "name" => "nullable|string",
+            "channel_id" => [
+                "required_with:name",
+                "integer",
+                new UniqueEventNameForChannelRule($this->name),
+            ],
+            "bucket_id" => "nullable|integer|exists:buckets,id",
+            "client_id" => "nullable|integer|exists:clients,id",
         ];
     }
 }
