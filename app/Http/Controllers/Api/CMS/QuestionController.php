@@ -27,7 +27,8 @@ class QuestionController extends Controller
     public function index()
     {
         try {
-            $data = $this->repo->get();
+            $columns = request()->get("columns") ?? null;
+            $data = $this->repo->get($columns);
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getTrace(), 500);
@@ -86,10 +87,10 @@ class QuestionController extends Controller
         }
     }
 
-    public function getSelectionTypes()
+    public function getFieldTypes()
     {
         try {
-            $data = getSelectionTypes();
+            $data = getFieldTypes();
             return $this->success($data, !empty($data) ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getTrace(), 500);

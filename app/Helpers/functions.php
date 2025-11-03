@@ -22,12 +22,12 @@ if (!function_exists('formatMsisdnInLocal')) {
     }
 }
 
-if (!function_exists('getSelectionTypes')) {
+if (!function_exists('getFieldTypes')) {
     /**
      *
      * @return array
      */
-    function getSelectionTypes():array
+    function getFieldTypes():array
     {
         return array_column(FieldType::cases(), 'value');
     }

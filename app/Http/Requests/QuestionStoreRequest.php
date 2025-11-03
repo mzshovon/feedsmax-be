@@ -17,17 +17,15 @@ class QuestionStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
             "question_en" => "required|string",
-            "question_bn" => "required|string",
-            "selection_type" => "required|string|in:".implode(",",getSelectionTypes()),
+            "question_another_lang" => "required|string",
+            "field_type" => "required|string|in:".implode(",",getFieldTypes()),
             "options" => "nullable|array",
-            "range" => "nullable|string",
+            "score_range" => "nullable|string",
             "parent_id" => "nullable|integer|exists:questionnaires,id",
             "order" => "required|integer",
             "status" => "required|integer|in:0,1",
-            "nps_rating_mapping" => "nullable|array",
-            "is_required" => "nullable|boolean",
+            "required" => "nullable|boolean",
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services\CMS;
 
 use App\Entity\QuestionResponseEntityForCMS;
 use App\Enums\ChoiceType;
+use App\Enums\FieldType;
 use App\Repositories\QuestionRepo;
 use App\Services\Contracts\CMS\QuestionServiceInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -15,21 +16,22 @@ class QuestionService implements QuestionServiceInterface
     public function __construct(
         private QuestionRepo $questionRepo
     ) {
-        $this->selectionListForAutoOptionsAdd = [
-            ChoiceType::Rating1To5Number->value,
-            ChoiceType::Score0To10Number->value,
-            ChoiceType::RatingYesNo->value,
-            ChoiceType::RatingNoYes->value,
-            ChoiceType::RatingYesNoNeutral->value,
-        ];
+        // $this->selectionListForAutoOptionsAdd = [
+        //     FieldType::Rating1To5Number->value,
+        //     ChoiceType::Score0To10Number->value,
+        //     ChoiceType::RatingYesNo->value,
+        //     ChoiceType::RatingNoYes->value,
+        //     ChoiceType::RatingYesNoNeutral->value,
+        // ];
     }
 
     /**
      * @return array
      */
-    public function get(): array
+    public function get(?string $columns = null): array
     {
-        $data = $this->questionRepo->getQuestionList();
+        $columns = !empty($columns) ? explode(",", $columns) : ["*"];
+        $data = $this->questionRepo->getQuestionList("read", $columns);
         return $data;
     }
 
@@ -48,8 +50,8 @@ class QuestionService implements QuestionServiceInterface
             $request['options'] = json_encode($request['options']);
         }
         // From CMS it will be confusing for user to add options for NPS rating. It will be manipulate from Feedsmax-Backend.
-        if(!isset($request['options']) && in_array($request['selection_type'], $this->selectionListForAutoOptionsAdd)) {
-            $request['options'] = json_encode(config("question.default_option_map.{$request['selection_type']}.options")) ?? null;
+        if(!isset($request['options']) && in_array($request['field_type'], $this->selectionListForAutoOptionsAdd)) {
+            $request['options'] = json_encode(config("question.default_option_map.{$request['field_type']}.options")) ?? null;
         }
 
         if(array_key_exists("nps_rating_mapping",$request)){
@@ -65,10 +67,10 @@ class QuestionService implements QuestionServiceInterface
     public function update(array $request, int $questionId): bool
     {
         // For updating existing record it will and populate data if not present.
-        if(!isset($request['options']) && in_array($request['selection_type'], $this->selectionListForAutoOptionsAdd)) {
+        if(!isset($request['options']) && isset($request['field_type']) && in_array($request['field_type'], $this->selectionListForAutoOptionsAdd)) {
             $question = $this->questionRepo->getQuestionById($questionId);
             if(!$question->options || empty($question->options)) {
-                $request['options'] = json_encode(config("question.default_option_map.{$request['selection_type']}.options")) ?? null;
+                $request['options'] = json_encode(config("question.default_option_map.{$request['field_type']}.options")) ?? null;
             }
         }
 
@@ -92,15 +94,16 @@ class QuestionService implements QuestionServiceInterface
             'user_name',
             'id',
             'question_en',
-            'question_bn',
-            'selection_type',
+            'question_another_lang',
+            'field_type',
             'options',
-            'range',
+            'score_range',
             'parent_id',
+            'ref_id',
+            'ref_val',
             'order',
             'status',
-            'nps_rating_mapping',
-            'is_required'
+            'required'
         ];
         foreach($request as $key => $value){
             if(in_array($key, $fillable)){
@@ -136,14 +139,15 @@ class QuestionService implements QuestionServiceInterface
         if ($question) {
             $data = (new QuestionResponseEntityForCMS())
                 ->setQuestionEn($question->question_en)
-                ->setQuestionBn($question->question_bn)
-                ->setSelectionType($question->selection_type)
+                ->setAnotherLang($question->question_another_lang)
+                ->setFieldType($question->field_type)
                 ->setOptions($question->options)
-                ->setRange($question->range)
+                ->setScoreRange($question->score_range)
                 ->setOrder($question->order)
                 ->setStatus($question->status)
                 ->setParentQuestion($question->parent)
-                ->setIsRequired($question->is_required)
+                ->setChildrenQuestion($question->children)
+                ->setRequired($question->required)
                 ->build();
         }
 

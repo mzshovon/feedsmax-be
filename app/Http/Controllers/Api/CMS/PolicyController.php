@@ -3,15 +3,9 @@
 namespace App\Http\Controllers\Api\CMS;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ChannelStoreRequest;
-use App\Http\Requests\ChannelUpdateRequest;
-use App\Http\Requests\DeleteRequest;
-use App\Http\Requests\PolicyStoreRequest;
-use App\Http\Requests\PolicyUpdateRequest;
-use App\Http\Requests\RuleUpdateRequest;
+use App\Http\Requests\{DeleteRequest, PolicyStoreRequest, PolicyUpdateRequest};
 use App\Services\Contracts\CMS\PolicyServiceInterface;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PolicyController extends Controller

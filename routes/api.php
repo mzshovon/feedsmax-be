@@ -37,7 +37,7 @@ Route::prefix('v1')->group(function () {
 
     // Version 1 APIs for feedback
     Route::group(["middleware" => ["generic", "query.logger"]], function () {
-        Route::post('/event/{client}/{channel}/{event}', [EventController::class, 'trigger'])->middleware(['auth.app-key']);
+        Route::post('/event/{client}/{channel}/{event}', [EventController::class, 'sendEvent'])->middleware(['auth.app-key']);
         Route::get('/questions/{client}/{channel}/{event}/{token}', [QuestionController::class, 'questions']);
         // Route::get('/questions/{client}/{channel}/{event}/{token}', [QuestionController::class, 'questions'])->middleware('auth.uuid');
         Route::post('/feedback/{client}/{channel}/{event}/{token}', [QuestionController::class, 'feedback'])->middleware('auth.uuid');
@@ -69,9 +69,9 @@ Route::prefix('v1')->group(function () {
         Route::put('/bucket/attach-questions', [BucketController::class, 'attachQuestionsToBucket']);
 
         // Questions Routes
-        Route::get('/question/event/{eventId}', [EventController::class, 'getQuestionsByEvent']);
+        Route::get('/question/event/{eventId}', [CMSEventController::class, 'getQuestionsByEvent']);
         Route::get('/question/bucket/{bucketId}', [BucketController::class, 'getQuestionsByBucket']);
-        Route::get('/selection-types', [CMSQuestionController::class, 'getSelectionTypes']);
+        Route::get('/field-types', [CMSQuestionController::class, 'getFieldTypes']);
 
         // Rules Routes
         Route::get('/quarantine-rules/list-for-selection', [PolicyController::class, 'getRulesForSelection']);

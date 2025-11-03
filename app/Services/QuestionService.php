@@ -106,7 +106,7 @@ class QuestionService implements QuestionServiceInterface
     {
         $data = [];
         if (!empty($questions)) {
-            $FieldTypes = getSelectionTypes();
+            $FieldTypes = getFieldTypes();
             $data = (new QuestionResponseEntity())
                 ->setEventId($eventId)
                 ->setStriveId($striveId)

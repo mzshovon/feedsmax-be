@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class QuestionResponseEntityForCMS
@@ -31,18 +32,18 @@ class QuestionResponseEntityForCMS
      *
      * @return $this
      */
-    public function setQuestionBn(string $question_bn): QuestionResponseEntityForCMS{
-        $this->data['question_bn'] = $question_bn;
+    public function setAnotherLang(string $question_another_lang): QuestionResponseEntityForCMS{
+        $this->data['question_another_lang'] = $question_another_lang;
         return $this;
     }
 
     /**
-     * @param string|null $selection_type
+     * @param string|null $field_type
      *
      * @return $this
      */
-    public function setSelectionType(string|null $selection_type): QuestionResponseEntityForCMS{
-        $this->data['selection_type'] = $selection_type;
+    public function setFieldType(string|null $field_type): QuestionResponseEntityForCMS{
+        $this->data['field_type'] = $field_type;
         return $this;
     }
 
@@ -61,7 +62,7 @@ class QuestionResponseEntityForCMS
      *
      * @return $this
      */
-    public function setRange(string|null $range): QuestionResponseEntityForCMS{
+    public function setScoreRange(string|null $range): QuestionResponseEntityForCMS{
         $this->data['range'] = $range;
         return $this;
     }
@@ -73,6 +74,16 @@ class QuestionResponseEntityForCMS
      */
     public function setParentQuestion(Model|null $parent_question): QuestionResponseEntityForCMS{
         $this->data['parent_question'] = $parent_question;
+        return $this;
+    }
+
+    /**
+     * @param Collection|null $child_questions
+     *
+     * @return $this
+     */
+    public function setChildrenQuestion(Collection|null $child_questions): QuestionResponseEntityForCMS{
+        $this->data['child_questions'] = $child_questions;
         return $this;
     }
 
@@ -96,11 +107,11 @@ class QuestionResponseEntityForCMS
     }
 
     /**
-     * @param int $is_required
+     * @param bool $required
      * @return $this
      */
-    public function setIsRequired(int $is_required): QuestionResponseEntityForCMS{
-        $this->data['is_required'] = $is_required;
+    public function setRequired(bool $required): QuestionResponseEntityForCMS{
+        $this->data['required'] = $required;
         return $this;
     }
 

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('parent_id')->nullable();
             $table->integer('order');
             $table->boolean('status');
+            $table->boolean('required')->default(false);
             $table->softDeletes();
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();

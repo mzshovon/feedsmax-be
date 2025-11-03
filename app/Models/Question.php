@@ -12,7 +12,7 @@ class Question extends Model
 
     protected $fillable = [
         "question_en",
-        "question_bn",
+        "question_another_lang",
         "field_type",
         "options",
         "score_range",
@@ -21,7 +21,7 @@ class Question extends Model
         "parent_id",
         "order",
         "status",
-        "is_required"
+        "required"
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

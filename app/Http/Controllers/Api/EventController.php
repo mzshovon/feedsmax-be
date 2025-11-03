@@ -18,7 +18,7 @@ class EventController extends Controller
         $this->service = $service;
     }
 
-    public function trigger(EventRequest $request, $channel, $event)
+    public function sendEvent(EventRequest $request, $channel, $event)
     {
         try {
             $data = $this->service->trigger($channel, $event, $request->all());

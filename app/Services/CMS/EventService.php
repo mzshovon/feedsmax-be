@@ -125,7 +125,8 @@ class EventService implements EventServiceInterface
     public function getQuestionsByEventId(int $eventId): array
     {
         $event = $this->eventRepo->getEventById($eventId);
-        return $event ? $this->questionRepo->getQuestionListForCMSByBucketId($event->bucket_id) : [];
+        // dd($event->bucket->questions);
+        return $event ? $event?->bucket?->questions->toArray() : [];
     }
 
     /**

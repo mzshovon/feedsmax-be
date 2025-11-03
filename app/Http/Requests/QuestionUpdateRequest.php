@@ -17,17 +17,15 @@ class QuestionUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_name" => "required|string|exists:vw_app_users,user_name",
             "question_en" => "nullable|string",
-            "question_bn" => "nullable|string",
-            "selection_type" => "nullable|string|in:".implode(",",getSelectionTypes()),
+            "question_another_lang" => "nullable|string",
+            "field_type" => "nullable|string|in:".implode(",",getFieldTypes()),
             "options" => "nullable|array",
-            "range" => "nullable|string",
+            "score_range" => "nullable|string",
             "parent_id" => "nullable|integer|exists:questionnaires,id",
             "order" => "nullable|integer",
             "status" => "nullable|integer|in:0,1",
-            "nps_rating_mapping" => "nullable|array",
-            "is_required" => "nullable|boolean",
+            "required" => "nullable|boolean",
         ];
     }
 }
